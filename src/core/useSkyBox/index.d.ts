@@ -23,10 +23,15 @@ export interface UseSkyBoxOptions {
    */
   castShadowList?: Array<string>
   /**
-   * 环境光动态过渡效果
-   * @defaultValue true
+   * 过渡速度，为0时表示不使用过渡
+   * @defaultValue 3
    */
-  dynamicEnvironment?: boolean
+  transitionSpeed?: number
+  /**
+   * 更新天空后的回调
+   * @defaultValue undefined
+   */
+  updateCallback?: () => {} | undefined
 }
 
 export interface UseSkyBoxReturnValue {
