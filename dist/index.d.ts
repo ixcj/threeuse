@@ -1,5 +1,10 @@
 import { Ref } from 'vue';
 
+declare function useRollingData<T = any>(
+  list: Array<T>,
+  options?: UseRollingDataOptions
+): UseRollingDataReturnValue
+
 interface UseRollingDataOptions {
   /**
    * 返回数据的长度
@@ -69,4 +74,4 @@ declare namespace render {
   };
 }
 
-export { UseRollingDataOptions, UseRollingDataReturnValue, render };
+export { UseRollingDataOptions, UseRollingDataReturnValue, render, useRollingData };

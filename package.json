@@ -1,6 +1,6 @@
 {
   "name": "threeuse",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "基于Vue3的Three.js实用组合工具",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",

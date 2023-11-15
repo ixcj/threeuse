@@ -1,5 +1,10 @@
 import type { Ref } from 'vue'
 
+export declare function useRollingData<T = any>(
+  list: Array<T>,
+  options?: UseRollingDataOptions
+): UseRollingDataReturnValue
+
 export interface UseRollingDataOptions {
   /**
    * 返回数据的长度
