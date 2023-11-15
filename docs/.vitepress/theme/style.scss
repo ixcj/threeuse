@@ -1,0 +1,24 @@
+.content-container {
+  max-width: none !important;
+}
+
+.btn-box {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+
+  button {
+    padding: 2px 8px;
+    border-radius: 2px;
+    border-color: var(--vp-button-brand-border);
+    color: var(--vp-button-brand-text);
+    background-color: var(--vp-button-brand-bg);
+    transition: color 0.25s, border-color 0.25s, background-color 0.25s;
+
+    &:hover {
+      border-color: var(--vp-button-brand-hover-border);
+      color: var(--vp-button-brand-hover-text);
+      background-color: var(--vp-button-brand-hover-bg);
+    }
+  }
+}

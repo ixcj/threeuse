@@ -1,0 +1,64 @@
+import { defineConfig } from 'vitepress';
+import { applyPlugins } from '@ruabick/md-demo-plugins';
+import { genTemp } from '@ruabick/vite-plugin-gen-temp';
+import { genApiDoc } from '@ruabick/vite-plugin-gen-api-doc';
+import { resolve } from 'path';
+
+const Guide = [
+  { text: '快速开始', link: '/guide/' },
+]
+
+const Core = [
+  { text: 'useSkyBox 天空盒', link: '/core/sky-box/' },
+]
+
+const Other = [
+  { text: 'useRollingData 滚动数据', link: '/other/rolling-data/' },
+]
+
+const sidebar = [
+  { text: '指引', items: Guide },
+  { text: '功能', items: Core },
+  { text: '其他', items: Other },
+]
+
+export default defineConfig({
+  lang: 'zh-CN',
+  lastUpdated: true,
+  title: 'ThreeUse',
+  vue: {},
+  vite: {
+    plugins: [genTemp(), genApiDoc()],
+    resolve: {
+      alias: {
+        '@': resolve('./src/'),
+        'threeuse': resolve('./src/index.ts'),
+      },
+    },
+  },
+  markdown: {
+    config: (md) => {
+      applyPlugins(md);
+    },
+    theme: {
+      light: 'github-light',
+      dark: 'github-dark',
+    },
+  },
+  buildEnd() {
+    process.exit(0);
+  },
+  themeConfig: {
+    sidebar,
+    logo: '/logo.png',
+    socialLinks: [{ icon: 'github', link: 'https://github.com/ixcj/threeuse' }],
+    outlineTitle: '本页目录',
+    footer: {
+      message: 'MIT Licensed.',
+      copyright: 'Copyright © 2023-PRESENT ixcj',
+    },
+  },
+  head: [
+    ['link', { rel: 'icon', href: '/logo.png', type: 'image/svg+xml' }],
+  ],
+});

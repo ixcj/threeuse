@@ -1,0 +1,16 @@
+diff --git a/dist/index.mjs b/dist/index.mjs
+index e24aa28d0fd6dab20a33dfc3d6fc0ef245df33b5..6f318386534a408087edbbad4f3b5db9fbce3055 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -449,8 +449,9 @@ async function getApiMarkdown(apiComponent, localeConfigs, baseDir) {
+     return apiComponent;
+   }
+   const srcPath = resolve(baseDir, props.src);
+-  const componentDoc = srcPath.endsWith(".vue") || srcPath.endsWith(".tsx") ? await parse(srcPath) : await parseInterface(srcPath);
+-  const apiMdContents = await getApiTmpl(componentDoc, "component", lang);
++  const isComponent = srcPath.endsWith(".vue") || srcPath.endsWith(".tsx") 
++  const componentDoc = isComponent ? await parse(srcPath) : await parseInterface(srcPath);
++  const apiMdContents = await getApiTmpl(componentDoc, isComponent ? "component" : "interface", lang);
+   return apiMdContents || `${srcPath}'s api is empty!`;
+ }
+ 
