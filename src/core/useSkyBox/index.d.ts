@@ -9,9 +9,14 @@ export declare function useSkyBox(
 export interface UseSkyBoxOptions {
   /**
    * 天空盒大小
-   * @defaultValue 4000
+   * @defaultValue [4000, 4000, 4000]
    */
-  skyBoxSize?: number
+  size?: [number, number, number]
+  /**
+   * 天空盒位置
+   * @defaultValue [0, 0, 0]
+   */
+  position?: [number, number, number]
   /**
    * 平行光的名称
    * @defaultValue '_sky_.light'

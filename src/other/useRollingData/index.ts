@@ -57,6 +57,9 @@ export function useRollingData<T = any>(
   watch(
     start,
     (val) => {
+      // 清空余数
+      remainderOfLastUpdate = 0
+
       if (val) {
         registeredRenderFunctionMap.set(key, (d: number) => {
           // 最新的个数数据，带小数，保留4位小数

@@ -26,6 +26,8 @@ function useRollingData<T = any>(
 
 <demo src="./__demo__/BasicUse.vue" title="基本使用" desc="可控制开始暂停、跳转到指定位置"></demo>
 
+<demo src="./__demo__/VueEchartsDemo.vue" title="搭配Echarts使用" desc="本示例使用'vue-echarts'库，具体使用方法请查阅相关文档"></demo>
+
 ## 参数
 
 <API src="./index.d.ts" lang="zh"></API>
