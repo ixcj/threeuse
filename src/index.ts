@@ -1,2 +1,1 @@
-export * from './other'
-export * as render from './utils/render'
+export * from './hooks'

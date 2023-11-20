@@ -1,7 +1,7 @@
 import type { UseRollingDataOptions, UseRollingDataReturnValue } from './index.d'
 import { ref, computed, watch, watchEffect } from 'vue'
-import { registeredRenderFunctionMap } from '@/utils/render'
 import { formattedDecimal } from '@/utils/math'
+import { useRenderClock } from '@/hooks/other/useRenderClock'
 
 export function useRollingData<T = any>(
   data: Array<T>,
@@ -14,9 +14,6 @@ export function useRollingData<T = any>(
     activate = false,
     mode = 'DirectFill',
   } = options
-
-  // 渲染函数里的key
-  const key = Symbol()
   
   // 数据副本，在末尾添加length个数据用来首尾相连
   const dataCopy = [...data, ...data.slice(0, length)]
@@ -54,42 +51,41 @@ export function useRollingData<T = any>(
   // 上次更新的余数
   let remainderOfLastUpdate: number = 0
 
+  // 控制开始暂停
+  const { start: startRender, key } = useRenderClock((d) => {
+    // 最新的个数数据，带小数，保留4位小数
+    const newNumber_float = formattedDecimal((d / interval) + remainderOfLastUpdate, 4)
+
+    // 设置余数，个数小于1时不更新，保留到下次计算，保留4位小数
+    remainderOfLastUpdate = formattedDecimal(newNumber_float % 1, 4)
+
+    // 本次更新的个数
+    const newNumber = Math.floor(newNumber_float)
+
+    if (newNumber) {
+      if (index.value + length < dataCopy.length) { // 判断是否跑完全程
+        if (mode === 'SlowFill' && displayData.value.length < length) { // 如果是缓慢填充模式并且没填充满
+          endIdex.value = index.value + displayData.value.length + newNumber
+        } else {
+          index.value += newNumber
+        }
+      } else {
+        // 跑完全程，重置下标位置
+        index.value = 0
+
+        // 跑完全程后强制修改endIndex，防止SlowFill模式重新填充
+        endIdex.value = index.value + length
+      }
+    }
+  })
+
   watch(
     start,
     (val) => {
       // 清空余数
       remainderOfLastUpdate = 0
 
-      if (val) {
-        registeredRenderFunctionMap.set(key, (d: number) => {
-          // 最新的个数数据，带小数，保留4位小数
-          const newNumber_float = formattedDecimal((d / interval) + remainderOfLastUpdate, 4)
-
-          // 设置余数，个数小于1时不更新，保留到下次计算，保留4位小数
-          remainderOfLastUpdate = formattedDecimal(newNumber_float % 1, 4)
-
-          // 本次更新的个数
-          const newNumber = Math.floor(newNumber_float)
-
-          if (newNumber) {
-            if (index.value + length < dataCopy.length) { // 判断是否跑完全程
-              if (mode === 'SlowFill' && displayData.value.length < length) { // 如果是缓慢填充模式并且没填充满
-                endIdex.value = index.value + displayData.value.length + newNumber
-              } else {
-                index.value += newNumber
-              }
-            } else {
-              // 跑完全程，重置下标位置
-              index.value = 0
-  
-              // 跑完全程后强制修改endIndex，防止SlowFill模式重新填充
-              endIdex.value = index.value + length
-            }
-          }
-        })
-      } else {
-        registeredRenderFunctionMap.delete(key)
-      }
+      startRender.value = val
     },
     { immediate: true }
   )

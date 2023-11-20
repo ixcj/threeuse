@@ -53,5 +53,5 @@ export interface UseRollingDataReturnValue<T = any> {
   /**
    * Symbol类型的key
    */
-  key: Symbol
+  key: symbol | string
 }

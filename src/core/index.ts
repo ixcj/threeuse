@@ -1,1 +1,2 @@
-export * from './useSkyBox'
+export const createApp = () => {
+}

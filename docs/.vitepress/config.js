@@ -8,18 +8,19 @@ const Guide = [
   { text: '快速开始', link: '/guide/' },
 ]
 
-const Core = [
-  { text: 'useSkyBox 天空盒', link: '/core/sky-box/' },
+const Other = [
+  { text: 'useRollingData 滚动数据', link: '/hooks/other/rolling-data/' },
+  { text: 'useRenderClock 渲染时钟', link: '/hooks/other/render-clock/' },
 ]
 
-const Other = [
-  { text: 'useRollingData 滚动数据', link: '/other/rolling-data/' },
+const Hooks = [
+  { text: 'useSkyBox 天空盒', link: '/hooks/sky-box/' },
+  { text: '其他', items: Other },
 ]
 
 const sidebar = [
   { text: '指引', items: Guide },
-  { text: '功能', items: Core },
-  { text: '其他', items: Other },
+  { text: '功能', items: Hooks },
 ]
 
 export default defineConfig({
