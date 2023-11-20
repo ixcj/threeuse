@@ -21,7 +21,10 @@ const sourceData = [...new Array(100).keys()].map(key => {
   }
 })
 
-const { displayData, start } = useRollingData(sourceData)
+const { displayData, start } = useRollingData(sourceData, {
+  interval: 3000,
+  activate: true
+})
 
 const option = computed(() => {
   const xAxisData = displayData.value.map(item => item.name)
