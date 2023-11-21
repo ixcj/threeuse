@@ -20,8 +20,8 @@ map:
 ## 类型
 
 ```js
-function useRender(
-  fn: Fn,
+function useRenderClock(
+  fn: (timeDifference: number) => void,
   options: UseRenderClockOptions
 ): UseRenderReturnValue
 ```
