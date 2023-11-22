@@ -23,7 +23,8 @@
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "lint": "eslint src/**/*.{vue,js,ts,tsx}",
     "lint-fix": "yarn lint -- --fix",
-    "release": "np"
+    "release": "np",
+    "preinstall": "npx only-allow pnpm"
   },
   "keywords": [
     "Vue3",
