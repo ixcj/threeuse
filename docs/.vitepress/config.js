@@ -8,6 +8,10 @@ const Guide = [
   { text: '快速开始', link: '/guide/' },
 ]
 
+const Core = [
+  { text: '创建应用', link: '/core/' },
+]
+
 const Other = [
   { text: 'useRollingData 滚动数据', link: '/hooks/other/rolling-data/' },
   { text: 'useRenderClock 渲染时钟', link: '/hooks/other/render-clock/' },
@@ -20,6 +24,7 @@ const Hooks = [
 
 const sidebar = [
   { text: '指引', items: Guide },
+  { text: '核心', items: Core },
   { text: '功能', items: Hooks },
 ]
 

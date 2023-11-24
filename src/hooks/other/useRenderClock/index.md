@@ -22,7 +22,7 @@ map:
 ```js
 function useRenderClock(
   fn: (timeDifference: number) => void,
-  options: UseRenderClockOptions
+  options?: UseRenderClockOptions
 ): UseRenderReturnValue
 ```
 

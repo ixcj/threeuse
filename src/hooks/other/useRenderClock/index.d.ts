@@ -5,7 +5,7 @@ export type Fn = (timeDifference: number) => void
 
 export declare function useRender(
   fn: Fn,
-  options: UseRenderClockOptions
+  options?: UseRenderClockOptions
 ): UseRenderReturnValue
 
 export interface UseRenderClockOptions {
