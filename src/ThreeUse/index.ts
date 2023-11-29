@@ -7,7 +7,7 @@ import {
   Color,
   Vector3,
 } from 'three'
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { debounce } from '@/utils/handle'
 
 export class ThreeUse {
@@ -82,8 +82,8 @@ export class ThreeUse {
     return this._renderer.domElement
   }
 
-  getControls(): Element {
-    return this._container
+  getControls(): OrbitControls {
+    return this._controls
   }
 
   getScene(): Scene {
@@ -94,11 +94,11 @@ export class ThreeUse {
     return this._camera
   }
   
-  use(plugin: Plugin, ...options: any[]) {
+  use(plugin: Plugin, ...options: any[]): this {
     return this
   }
 
-  mount(rootContainer: Element | string) {
+  mount(rootContainer: Element | string): this {
     const container = normalizeContainer(rootContainer)
 
     if (container) {
@@ -108,6 +108,15 @@ export class ThreeUse {
       this._render()
       this._resize()
     }
+
+    return this
+  }
+
+  unmount(): this {
+    const domElement = this.getDom()
+    domElement && domElement.remove()
+
+    return this
   }
 }
 
