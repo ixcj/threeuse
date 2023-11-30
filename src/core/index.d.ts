@@ -1,4 +1,11 @@
-import { ColorRepresentation } from 'three'
+import type { ThreeUse } from '../ThreeUse'
+import type { ColorRepresentation } from 'three'
+
+export declare function createApp(
+  options?: CreateAppOptions
+): CreateAppReturnValue
+
+export type ObjType = { [key: string | symbol]: any }
 
 export interface CreateAppOptions {
   clearColor?: ColorRepresentation
@@ -10,4 +17,8 @@ export interface CreateAppOptions {
   aspect?: number
   near?: number
   far?: number
+}
+
+export interface CreateAppReturnValue extends ThreeUse {
+  [prop: string]: any
 }

@@ -50,6 +50,8 @@ export class ThreeUse {
     }
   }
 
+  public globalProperties: Record<string | symbol, any> = {}
+
   constructor(options: CreateAppOptions = {}) {
     const {
       clearColor = '#181818',
