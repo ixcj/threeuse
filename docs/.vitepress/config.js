@@ -39,6 +39,7 @@ export default defineConfig({
       alias: {
         '@': resolve('./src/'),
         'threeuse': resolve('./src/index.ts'),
+        'threeuse/plugin': resolve('./src/plugin/index.ts')
       },
     },
   },

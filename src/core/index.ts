@@ -1,5 +1,5 @@
 import { CreateAppOptions, CreateAppReturnValue, ObjType } from './index.d'
-import { ThreeUse } from '../ThreeUse'
+import { ThreeUse } from './ThreeUse'
 
 export function createApp(options: CreateAppOptions = {}): CreateAppReturnValue {
   const app = new ThreeUse(options)

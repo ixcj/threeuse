@@ -1,4 +1,4 @@
-import type { ThreeUse } from '../ThreeUse'
+import type { ThreeUse } from './ThreeUse'
 import type { ColorRepresentation } from 'three'
 
 export declare function createApp(

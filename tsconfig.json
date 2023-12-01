@@ -34,6 +34,9 @@
             ],
             "threeuse": [
                 "src/index.ts"
+            ],
+            "threeuse/plugin": [
+                "src/plugin/index.ts"
             ]
         },
     },
