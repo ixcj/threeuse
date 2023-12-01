@@ -1,5 +1,5 @@
 import type { CreateAppOptions } from '../core/index.d'
-import { isString } from '@/utils/type'
+import { isString, isFunction } from '@/utils/type'
 import {
   Scene,
   PerspectiveCamera,
@@ -9,6 +9,12 @@ import {
 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { debounce } from '@/utils/handle'
+
+interface InstallFunction {
+  (app: ThreeUse, ...options: any[]): void
+}
+
+type Plugin = { install: InstallFunction } | InstallFunction
 
 export class ThreeUse {
   private _container: Element
@@ -97,6 +103,12 @@ export class ThreeUse {
   }
   
   use(plugin: Plugin, ...options: any[]): this {
+    if (isFunction(plugin)) {
+      plugin(this, options)
+    } else if (plugin && isFunction(plugin.install)) {
+      plugin.install(this, options)
+    }
+
     return this
   }
 
