@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { createApp, useRenderClock } from 'threeuse'
+import { stats } from 'threeuse/plugin'
 import { BoxGeometry, MeshBasicMaterial, Mesh, Color } from 'three'
 
 const app = createApp({ cameraPosition: [0, 0, 5] })
@@ -21,7 +22,7 @@ useRenderClock((d) => {
   cube.rotation.y += rotation
 })
 
-onMounted(() => app.mount('#app-container'))
+onMounted(() => app.mount('#app-container').use(stats))
 </script>
 
 <template>
@@ -32,5 +33,6 @@ onMounted(() => app.mount('#app-container'))
 #app-container {
   width: 100%;
   height: 300px;
+  position: relative;
 }
 </style>

@@ -1,4 +1,7 @@
-function test() {
-}
+const stats = {
+  install: (app, ...options) => {
+    console.log(options);
+  }
+};
 
-export { test };
+export { stats };

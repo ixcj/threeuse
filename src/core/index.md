@@ -18,7 +18,7 @@ map:
 ```js
 function createApp(
   options?: CreateAppOptions
-): CreateAppReturnValue
+): ThreeUse
 ```
 
 ## 参数

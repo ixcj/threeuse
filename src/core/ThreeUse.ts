@@ -14,6 +14,9 @@ interface InstallFunction {
   (app: ThreeUse, ...options: any[]): void
 }
 
+type ObserverTyep = 'mount' | 'unmount'
+type ObserverBehavior = { [type in ObserverTyep ]: Function }
+type GlobalPropertiesKey = string | symbol
 type Plugin = { install: InstallFunction } | InstallFunction
 
 export class ThreeUse {
@@ -23,6 +26,7 @@ export class ThreeUse {
   private _camera: PerspectiveCamera
   private _controls: OrbitControls
   private _resizeObserver = new ResizeObserver(() => this._resize())
+  private _observer: WeakMap<Object, ObserverBehavior> = new WeakMap()
   private _size: { width: number, height: number } = {
     width: 0,
     height: 0
@@ -56,7 +60,7 @@ export class ThreeUse {
     }
   }
 
-  public globalProperties: Record<string | symbol, any> = {}
+  public globalProperties: Record<GlobalPropertiesKey, any> = {}
 
   constructor(options: CreateAppOptions = {}) {
     const {
@@ -88,6 +92,10 @@ export class ThreeUse {
 
   getDom(): Element {
     return this._renderer.domElement
+  }
+
+  getContainer(): Element {
+    return this._container
   }
 
   getControls(): OrbitControls {
@@ -131,6 +139,10 @@ export class ThreeUse {
     domElement && domElement.remove()
 
     return this
+  }
+
+  observer(observerObject: Object, behavior: ObserverBehavior) {
+
   }
 }
 

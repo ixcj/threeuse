@@ -2,7 +2,10 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-function test() {
-}
+const stats = {
+  install: (app, ...options) => {
+    console.log(options);
+  }
+};
 
-exports.test = test;
+exports.stats = stats;
