@@ -40,9 +40,6 @@ dependencies:
   np:
     specifier: ^7.6.2
     version: 7.6.2
-  stats.js:
-    specifier: ^0.17.0
-    version: 0.17.0
   three:
     specifier: ^0.158.0
     version: 0.158.0
@@ -60,9 +57,6 @@ devDependencies:
   '@types/node':
     specifier: ^20.9.5
     version: 20.9.5
-  '@types/stats.js':
-    specifier: ^0.17.3
-    version: 0.17.3
   sass:
     specifier: ^1.69.5
     version: 1.69.5
@@ -1149,6 +1143,7 @@ packages:
 
   /@types/stats.js@0.17.3:
     resolution: {integrity: sha512-pXNfAD3KHOdif9EQXZ9deK82HVNaXP5ZIF5RP2QG6OQFNTaY2YIetfrE9t528vEreGQvEPRDDc8muaoYeK0SxQ==}
+    dev: false
 
   /@types/three@0.158.2:
     resolution: {integrity: sha512-KPYbdLI8VPhu7qnHqsayfkuk58Qk+20l1U5HBK7uG50EjtrqeCreurNNpnatMZje29XRuTM1A+pGHGdDBHPyUQ==}
@@ -5011,10 +5006,6 @@ packages:
 
   /sprintf-js@1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
-    dev: false
-
-  /stats.js@0.17.0:
-    resolution: {integrity: sha512-hNKz8phvYLPEcRkeG1rsGmV5ChMjKDAWU7/OJJdDErPBNChQXxCo3WZurGpnWc6gZhAzEPFad1aVgyOANH1sMw==}
     dev: false
 
   /string-width@1.0.2:

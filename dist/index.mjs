@@ -1,6 +1,8 @@
 import { Scene, PerspectiveCamera, WebGLRenderer, Color, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { ref, watchEffect, computed, watch } from 'vue';
+import { ref, computed, watchEffect, watch } from 'vue';
+import { u as useRenderClock } from './chunks/index.mjs';
+export { u as useRenderClock } from './chunks/index.mjs';
 
 const isFunction = (val) => typeof val === "function";
 const isString = (val) => typeof val === "string";
@@ -24,16 +26,18 @@ function debounce(func, delay, immediate = false) {
 class ThreeUse {
   constructor(options = {}) {
     this._resizeObserver = new ResizeObserver(() => this._resize());
+    this._eventList = [];
+    this._subscribe = /* @__PURE__ */ new WeakMap();
     this._size = {
       width: 0,
       height: 0
     };
+    this.globalProperties = {};
     this._customRender = void 0;
     this._resize = debounce(() => {
       this._setSize();
       this._setCamera();
     }, 50, true);
-    this.globalProperties = {};
     const {
       clearColor = "#181818",
       cameraPosition = [0, 0, 0],
@@ -67,13 +71,28 @@ class ThreeUse {
   _render() {
     requestAnimationFrame(this._render.bind(this));
     if (this._customRender instanceof Function) {
-      this._customRender();
+      this._customRender(this._scene, this._camera, this);
     } else {
       this._renderer.render(this._scene, this._camera);
     }
   }
+  _notify(notifyType) {
+    this._eventList.forEach((behavior) => {
+      const fn = behavior[notifyType];
+      if (isFunction(fn)) {
+        try {
+          fn();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    });
+  }
   getDom() {
     return this._renderer.domElement;
+  }
+  getContainer() {
+    return this._container;
   }
   getControls() {
     return this._controls;
@@ -100,13 +119,26 @@ class ThreeUse {
       container.appendChild(this.getDom());
       this._render();
       this._resize();
+      this._notify("mount");
     }
     return this;
   }
   unmount() {
     const domElement = this.getDom();
-    domElement && domElement.remove();
+    if (domElement) {
+      domElement.remove();
+      this._notify("unmount");
+    }
     return this;
+  }
+  subscribe(behavior) {
+    this._eventList.push(behavior);
+    this._subscribe.set(behavior, behavior);
+    return behavior;
+  }
+  unSubscribe(behavior) {
+    const index = this._eventList.findIndex((item) => item === behavior);
+    index >= 0 && this._eventList.splice(index, 1);
   }
 }
 function normalizeContainer(container) {
@@ -129,39 +161,6 @@ function createApp(options = {}) {
 function formattedDecimal(n, d = 2) {
   const multiple = Math.pow(10, d);
   return Math.round(n * multiple) / multiple;
-}
-
-let lastUpdatedTimestamp = new Date().getTime();
-const registeredRenderFunctionMap = /* @__PURE__ */ new Map();
-function render() {
-  const newLastUpdatedTimestamp = new Date().getTime();
-  const timeDifference = newLastUpdatedTimestamp - lastUpdatedTimestamp;
-  lastUpdatedTimestamp = newLastUpdatedTimestamp;
-  if (registeredRenderFunctionMap.size) {
-    registeredRenderFunctionMap.forEach((fn) => fn(timeDifference));
-  }
-  if (typeof window !== "undefined") {
-    window.requestAnimationFrame(render);
-  }
-}
-render();
-function useRenderClock(fn, options = {}) {
-  const {
-    key = Symbol(),
-    activate = true
-  } = options;
-  const start = ref(activate);
-  watchEffect(() => {
-    if (start.value) {
-      registeredRenderFunctionMap.set(key, fn);
-    } else {
-      registeredRenderFunctionMap.delete(key);
-    }
-  });
-  return {
-    start,
-    key
-  };
 }
 
 function useRollingData(data, options = {}) {
@@ -227,4 +226,4 @@ function useRollingData(data, options = {}) {
 function useSky() {
 }
 
-export { createApp, ThreeUse as default, useRenderClock, useRollingData, useSky };
+export { createApp, ThreeUse as default, useRollingData, useSky };

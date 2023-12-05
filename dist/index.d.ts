@@ -1,8 +1,87 @@
-import { T as ThreeUse } from './ThreeUse-803bba21.js';
-export { T as default } from './ThreeUse-803bba21.js';
-import { ColorRepresentation, Scene } from 'three';
+import { ColorRepresentation, Scene, PerspectiveCamera } from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Ref } from 'vue';
-import 'three/examples/jsm/controls/OrbitControls.js';
+
+interface CreateAppOptions$1 {
+  /**
+   * 画布颜色
+   * @defaultValue #181818
+   */
+  clearColor?: ColorRepresentation
+
+  /**
+   * 相机初始位置
+   * @defaultValue [0, 0, 0]
+   */
+  cameraPosition?: [number, number, number]
+  /**
+   * 控制器target初始位置
+   * @defaultValue [0, 0, 0]
+   */
+  targetPosition?: [number, number, number]
+  
+  /**
+   * 相机fov参数
+   * @defaultValue 75
+   */
+  fov?: number
+  /**
+   * 相机aspect参数
+   * @defaultValue 16/9
+   */
+  aspect?: number
+  /**
+   * 相机near参数
+   * @defaultValue 0.1
+   */
+  near?: number
+  /**
+   * 相机far参数
+   * @defaultValue 1000
+   */
+  far?: number
+}
+
+interface InstallFunction {
+    (app: ThreeUse, ...options: any[]): void;
+}
+type ObserverTyep = 'mount' | 'unmount';
+type ObserverBehavior = {
+    [type in ObserverTyep]?: Function;
+};
+type GlobalPropertiesKey = string | symbol;
+type Plugin = {
+    install: InstallFunction;
+} | InstallFunction;
+declare class ThreeUse {
+    private _renderer;
+    private _scene;
+    private _camera;
+    private _controls;
+    constructor(options?: CreateAppOptions$1);
+    private _container;
+    private _resizeObserver;
+    private _eventList;
+    private _subscribe;
+    private _size;
+    globalProperties: Record<GlobalPropertiesKey, any>;
+    private _customRender;
+    private _setSize;
+    private _setCamera;
+    private _resize;
+    private _render;
+    private _notify;
+    getDom(): Element;
+    getContainer(): Element;
+    getControls(): OrbitControls;
+    getScene(): Scene;
+    getCamera(): PerspectiveCamera;
+    use(plugin: Plugin, ...options: any[]): this;
+    mount(rootContainer: Element | string): this;
+    unmount(): this;
+    subscribe(behavior: ObserverBehavior): ObserverBehavior;
+    unSubscribe(behavior: ObserverBehavior): void;
+}
 
 declare function createApp(
   options?: CreateAppOptions
@@ -218,4 +297,4 @@ interface UseSkyBoxControl {
   azimuth?: number,
 }
 
-export { CreateAppOptions, CreateAppReturnValue, Fn, Key, ObjType, UseRenderClockOptions, UseRenderReturnValue, UseRollingDataOptions, UseRollingDataReturnValue, UseSkyBoxControl, UseSkyBoxOptions, UseSkyBoxReturnValue, createApp, useRender, useRollingData, useSkyBox };
+export { CreateAppOptions, CreateAppReturnValue, Fn, Key, ObjType, UseRenderClockOptions, UseRenderReturnValue, UseRollingDataOptions, UseRollingDataReturnValue, UseSkyBoxControl, UseSkyBoxOptions, UseSkyBoxReturnValue, createApp, ThreeUse as default, useRender, useRollingData, useSkyBox };

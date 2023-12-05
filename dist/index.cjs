@@ -5,6 +5,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 const three = require('three');
 const OrbitControls_js = require('three/examples/jsm/controls/OrbitControls.js');
 const vue = require('vue');
+const index = require('./chunks/index.cjs');
 
 const isFunction = (val) => typeof val === "function";
 const isString = (val) => typeof val === "string";
@@ -28,16 +29,18 @@ function debounce(func, delay, immediate = false) {
 class ThreeUse {
   constructor(options = {}) {
     this._resizeObserver = new ResizeObserver(() => this._resize());
+    this._eventList = [];
+    this._subscribe = /* @__PURE__ */ new WeakMap();
     this._size = {
       width: 0,
       height: 0
     };
+    this.globalProperties = {};
     this._customRender = void 0;
     this._resize = debounce(() => {
       this._setSize();
       this._setCamera();
     }, 50, true);
-    this.globalProperties = {};
     const {
       clearColor = "#181818",
       cameraPosition = [0, 0, 0],
@@ -71,13 +74,28 @@ class ThreeUse {
   _render() {
     requestAnimationFrame(this._render.bind(this));
     if (this._customRender instanceof Function) {
-      this._customRender();
+      this._customRender(this._scene, this._camera, this);
     } else {
       this._renderer.render(this._scene, this._camera);
     }
   }
+  _notify(notifyType) {
+    this._eventList.forEach((behavior) => {
+      const fn = behavior[notifyType];
+      if (isFunction(fn)) {
+        try {
+          fn();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    });
+  }
   getDom() {
     return this._renderer.domElement;
+  }
+  getContainer() {
+    return this._container;
   }
   getControls() {
     return this._controls;
@@ -104,13 +122,26 @@ class ThreeUse {
       container.appendChild(this.getDom());
       this._render();
       this._resize();
+      this._notify("mount");
     }
     return this;
   }
   unmount() {
     const domElement = this.getDom();
-    domElement && domElement.remove();
+    if (domElement) {
+      domElement.remove();
+      this._notify("unmount");
+    }
     return this;
+  }
+  subscribe(behavior) {
+    this._eventList.push(behavior);
+    this._subscribe.set(behavior, behavior);
+    return behavior;
+  }
+  unSubscribe(behavior) {
+    const index = this._eventList.findIndex((item) => item === behavior);
+    index >= 0 && this._eventList.splice(index, 1);
   }
 }
 function normalizeContainer(container) {
@@ -135,39 +166,6 @@ function formattedDecimal(n, d = 2) {
   return Math.round(n * multiple) / multiple;
 }
 
-let lastUpdatedTimestamp = new Date().getTime();
-const registeredRenderFunctionMap = /* @__PURE__ */ new Map();
-function render() {
-  const newLastUpdatedTimestamp = new Date().getTime();
-  const timeDifference = newLastUpdatedTimestamp - lastUpdatedTimestamp;
-  lastUpdatedTimestamp = newLastUpdatedTimestamp;
-  if (registeredRenderFunctionMap.size) {
-    registeredRenderFunctionMap.forEach((fn) => fn(timeDifference));
-  }
-  if (typeof window !== "undefined") {
-    window.requestAnimationFrame(render);
-  }
-}
-render();
-function useRenderClock(fn, options = {}) {
-  const {
-    key = Symbol(),
-    activate = true
-  } = options;
-  const start = vue.ref(activate);
-  vue.watchEffect(() => {
-    if (start.value) {
-      registeredRenderFunctionMap.set(key, fn);
-    } else {
-      registeredRenderFunctionMap.delete(key);
-    }
-  });
-  return {
-    start,
-    key
-  };
-}
-
 function useRollingData(data, options = {}) {
   const {
     length = 10,
@@ -177,16 +175,16 @@ function useRollingData(data, options = {}) {
     mode = "DirectFill"
   } = options;
   const dataCopy = [...data, ...data.slice(0, length)];
-  const index = vue.ref(initialIndex);
-  const endIdex = vue.ref(mode === "SlowFill" ? index.value : index.value + length);
+  const index$1 = vue.ref(initialIndex);
+  const endIdex = vue.ref(mode === "SlowFill" ? index$1.value : index$1.value + length);
   let displayDataLength = 0;
   const displayData = vue.computed(() => {
-    const _displayData = dataCopy.slice(index.value, endIdex.value);
+    const _displayData = dataCopy.slice(index$1.value, endIdex.value);
     displayDataLength = _displayData.length;
     return _displayData;
   });
   vue.watchEffect(() => {
-    let newEndIdex = index.value + length;
+    let newEndIdex = index$1.value + length;
     if (mode === "SlowFill" && displayDataLength < length) {
       newEndIdex = displayDataLength + 1;
     }
@@ -194,20 +192,20 @@ function useRollingData(data, options = {}) {
   });
   const start = vue.ref(activate);
   let remainderOfLastUpdate = 0;
-  const { start: startRender, key } = useRenderClock((d) => {
+  const { start: startRender, key } = index.useRenderClock((d) => {
     const newNumber_float = formattedDecimal(d / interval + remainderOfLastUpdate, 4);
     remainderOfLastUpdate = formattedDecimal(newNumber_float % 1, 4);
     const newNumber = Math.floor(newNumber_float);
     if (newNumber) {
-      if (index.value + length < dataCopy.length) {
+      if (index$1.value + length < dataCopy.length) {
         if (mode === "SlowFill" && displayData.value.length < length) {
-          endIdex.value = index.value + displayData.value.length + newNumber;
+          endIdex.value = index$1.value + displayData.value.length + newNumber;
         } else {
-          index.value += newNumber;
+          index$1.value += newNumber;
         }
       } else {
-        index.value = 0;
-        endIdex.value = index.value + length;
+        index$1.value = 0;
+        endIdex.value = index$1.value + length;
       }
     }
   });
@@ -221,7 +219,7 @@ function useRollingData(data, options = {}) {
   );
   return {
     displayData,
-    index,
+    index: index$1,
     endIdex,
     start,
     key
@@ -231,8 +229,8 @@ function useRollingData(data, options = {}) {
 function useSky() {
 }
 
+exports.useRenderClock = index.useRenderClock;
 exports.createApp = createApp;
 exports["default"] = ThreeUse;
-exports.useRenderClock = useRenderClock;
 exports.useRollingData = useRollingData;
 exports.useSky = useSky;

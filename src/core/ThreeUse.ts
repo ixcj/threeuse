@@ -64,7 +64,7 @@ export class ThreeUse {
 
   public globalProperties: Record<GlobalPropertiesKey, any> = {}
 
-  private _customRender: null | undefined | ((this: ThreeUse) => void) = undefined
+  private _customRender: null | undefined | ((scene: Scene, camera: PerspectiveCamera, app: ThreeUse) => void) = undefined
 
   private _setSize(): void {    
     this._size.width = this._container?.clientWidth || 0
@@ -86,7 +86,7 @@ export class ThreeUse {
     requestAnimationFrame(this._render.bind(this))
 
     if (this._customRender instanceof Function) {
-      this._customRender()
+      this._customRender(this._scene, this._camera, this)
     } else {
       this._renderer.render(this._scene, this._camera)
     }
