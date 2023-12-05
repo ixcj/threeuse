@@ -15,12 +15,18 @@ export const stats = {
     app.globalProperties.$stats = stats
     app.globalProperties.$stats.showPanel(0)
 
-    const container = app.getContainer()
     const statsDom = app.globalProperties.$stats.dom
 
-    if (container && followContainer) {
-      statsDom.style.setProperty('position', 'absolute')
-      container.appendChild(statsDom)
+    if (followContainer) {
+      app.subscribe({
+        mount: () => {
+          statsDom.style.setProperty('position', 'absolute')
+          app.getContainer().appendChild(statsDom)
+        },
+        unmount: () => {
+          statsDom.remove()
+        }
+      })
     } else {
       document.body.appendChild(statsDom)
     }

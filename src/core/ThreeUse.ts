@@ -15,22 +15,54 @@ interface InstallFunction {
 }
 
 type ObserverTyep = 'mount' | 'unmount'
-type ObserverBehavior = { [type in ObserverTyep ]: Function }
+type ObserverBehavior = { [type in ObserverTyep ]?: Function }
 type GlobalPropertiesKey = string | symbol
 type Plugin = { install: InstallFunction } | InstallFunction
 
 export class ThreeUse {
-  private _container: Element
   private _renderer: WebGLRenderer
   private _scene: Scene
   private _camera: PerspectiveCamera
   private _controls: OrbitControls
+
+  constructor(options: CreateAppOptions = {}) {
+    const {
+      clearColor = '#181818',
+
+      cameraPosition = [0, 0, 0],
+      targetPosition = [0, 0, 0],
+
+      fov =  75,
+      aspect =  16/9,
+      near =  0.1,
+      far =  1000,
+    } = options
+
+    this._scene = new Scene()
+    this._camera = new PerspectiveCamera(fov, aspect, near, far)
+    this._camera.position.set(...cameraPosition)
+
+    this._renderer = new WebGLRenderer({
+      alpha: true,
+      antialias: true,
+      failIfMajorPerformanceCaveat: true,
+    })
+    this._renderer.setClearColor(new Color(clearColor))
+
+    this._controls = new OrbitControls(this._camera, this._renderer.domElement)
+    this._controls.target = new Vector3(...targetPosition)
+  }
+
+  private _container: Element
   private _resizeObserver = new ResizeObserver(() => this._resize())
-  private _observer: WeakMap<Object, ObserverBehavior> = new WeakMap()
+  private _eventList: ObserverBehavior[] = []
+  private _subscribe: WeakMap<Object, ObserverBehavior> = new WeakMap()
   private _size: { width: number, height: number } = {
     width: 0,
     height: 0
   }
+
+  public globalProperties: Record<GlobalPropertiesKey, any> = {}
 
   private _customRender: null | undefined | ((this: ThreeUse) => void) = undefined
 
@@ -60,34 +92,17 @@ export class ThreeUse {
     }
   }
 
-  public globalProperties: Record<GlobalPropertiesKey, any> = {}
-
-  constructor(options: CreateAppOptions = {}) {
-    const {
-      clearColor = '#181818',
-
-      cameraPosition = [0, 0, 0],
-      targetPosition = [0, 0, 0],
-
-      fov =  75,
-      aspect =  16/9,
-      near =  0.1,
-      far =  1000,
-    } = options
-
-    this._scene = new Scene()
-    this._camera = new PerspectiveCamera(fov, aspect, near, far)
-    this._camera.position.set(...cameraPosition)
-
-    this._renderer = new WebGLRenderer({
-      alpha: true,
-      antialias: true,
-      failIfMajorPerformanceCaveat: true,
+  private _notify(notifyType: ObserverTyep) {
+    this._eventList.forEach(behavior => {
+      const fn = behavior[notifyType]
+      if (isFunction(fn)) {
+        try {
+          fn()
+        } catch(err) {
+          console.error(err)
+        }
+      }
     })
-    this._renderer.setClearColor(new Color(clearColor))
-
-    this._controls = new OrbitControls(this._camera, this._renderer.domElement)
-    this._controls.target = new Vector3(...targetPosition)
   }
 
   getDom(): Element {
@@ -129,6 +144,8 @@ export class ThreeUse {
       container.appendChild(this.getDom())
       this._render()
       this._resize()
+
+      this._notify('mount')
     }
 
     return this
@@ -136,13 +153,26 @@ export class ThreeUse {
 
   unmount(): this {
     const domElement = this.getDom()
-    domElement && domElement.remove()
+    if (domElement) {
+      domElement.remove()
+
+      this._notify('unmount')
+    }
 
     return this
   }
 
-  observer(observerObject: Object, behavior: ObserverBehavior) {
+  subscribe(behavior: ObserverBehavior): ObserverBehavior {
+    const event = Object.assign(behavior)
+    this._eventList.push(event)
+    this._subscribe.set(event, event)
 
+    return event
+  }
+
+  unSubscribe(behavior: ObserverBehavior) {
+    const index = this._eventList.findIndex(item => item === behavior)
+    index >=0 && this._eventList.splice(index, 1)
   }
 }
 

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { createApp, useRenderClock } from 'threeuse'
+import { stats } from 'threeuse/plugin'
 import { BoxGeometry, MeshBasicMaterial, Mesh, Color } from 'three'
 
-const app = createApp({ cameraPosition: [0, 0, 5] })
+const app = createApp({ cameraPosition: [0, 0, 5] }).use(stats)
 
 const geometry = new BoxGeometry(1, 1, 1)
 const mats = []
