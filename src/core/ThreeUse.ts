@@ -163,11 +163,10 @@ export class ThreeUse {
   }
 
   subscribe(behavior: ObserverBehavior): ObserverBehavior {
-    const event = Object.assign(behavior)
-    this._eventList.push(event)
-    this._subscribe.set(event, event)
+    this._eventList.push(behavior)
+    this._subscribe.set(behavior, behavior)
 
-    return event
+    return behavior
   }
 
   unSubscribe(behavior: ObserverBehavior) {
