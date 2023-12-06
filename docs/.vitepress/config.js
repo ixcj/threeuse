@@ -46,6 +46,12 @@ export default defineConfig({
         'threeuse': resolve('./src/')
       },
     },
+    ssr: {
+      noExternal: [
+        'echarts',
+        'vue-echarts'
+      ]
+    }
   },
   markdown: {
     config: (md) => {
