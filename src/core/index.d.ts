@@ -19,11 +19,6 @@ export interface CreateAppOptions {
    * @defaultValue [0, 0, 0]
    */
   cameraPosition?: [number, number, number]
-  /**
-   * 控制器target初始位置
-   * @defaultValue [0, 0, 0]
-   */
-  targetPosition?: [number, number, number]
   
   /**
    * 相机fov参数

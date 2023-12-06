@@ -23,14 +23,13 @@ export class ThreeUse {
   private _renderer: WebGLRenderer
   private _scene: Scene
   private _camera: PerspectiveCamera
-  private _controls: OrbitControls
+  private _controls: any
 
   constructor(options: CreateAppOptions = {}) {
     const {
       clearColor = '#181818',
 
       cameraPosition = [0, 0, 0],
-      targetPosition = [0, 0, 0],
 
       fov =  75,
       aspect =  16/9,
@@ -48,9 +47,6 @@ export class ThreeUse {
       failIfMajorPerformanceCaveat: true,
     })
     this._renderer.setClearColor(new Color(clearColor))
-
-    this._controls = new OrbitControls(this._camera, this._renderer.domElement)
-    this._controls.target = new Vector3(...targetPosition)
   }
 
   private _container: Element
@@ -105,7 +101,7 @@ export class ThreeUse {
     })
   }
 
-  getDom(): Element {
+  getDom(): HTMLCanvasElement {
     return this._renderer.domElement
   }
 
@@ -113,8 +109,12 @@ export class ThreeUse {
     return this._container
   }
 
-  getControls(): OrbitControls {
+  getControls(): any {
     return this._controls
+  }
+
+  setControls(fn: (camera: PerspectiveCamera, el: Element, target?: [number, number, number]) => any): void {
+    this._controls = fn(this._camera, this.getDom())
   }
 
   getScene(): Scene {
@@ -144,6 +144,11 @@ export class ThreeUse {
       container.appendChild(this.getDom())
       this._render()
       this._resize()
+
+      if (!this._controls) {
+        this._controls = new OrbitControls(this._camera, this.getDom())
+        this._controls.target = new Vector3(0, 0, 0)
+      }
 
       this._notify('mount')
     }

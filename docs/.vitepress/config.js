@@ -18,6 +18,7 @@ const Other = [
 ]
 
 const Hooks = [
+  { text: 'useRain 雨', link: '/hooks/rain/' },
   { text: 'useSkyBox 天空盒', link: '/hooks/sky-box/' },
   { text: '其他', items: Other },
 ]

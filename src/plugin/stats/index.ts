@@ -3,7 +3,7 @@ import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { useRenderClock } from '@/hooks/other/useRenderClock'
 
 export const stats = {
-  install: (app: ThreeUse, ...options: any[]) => {
+  install: (app: ThreeUse, options: any[]) => {
     const [
       show = true,
       followContainer = true
@@ -12,27 +12,34 @@ export const stats = {
     if (!show) return
 
     const stats = new Stats()
-    app.globalProperties.$stats = stats
-    app.globalProperties.$stats.showPanel(0)
-
-    const statsDom = app.globalProperties.$stats.dom
+    const statsDom = stats.dom
 
     if (followContainer) {
+      statsDom.style.setProperty('position', 'absolute')
+      statsDom.style.setProperty('z-index', '9')
+
       app.subscribe({
         mount: () => {
-          statsDom.style.setProperty('position', 'absolute')
-          app.getContainer().appendChild(statsDom)
+          mount(app.getContainer())
         },
         unmount: () => {
           statsDom.remove()
         }
       })
     } else {
-      document.body.appendChild(statsDom)
+      mount(document.body)
     }
 
     useRenderClock(() => {
       stats.update()
     })
+
+    function mount(el: Element) {
+      app.globalProperties.$stats
+        && app.globalProperties.$stats.dom.remove()
+
+      el.appendChild(statsDom)
+      app.globalProperties.$stats = stats
+    }
   }
-} 
+}
