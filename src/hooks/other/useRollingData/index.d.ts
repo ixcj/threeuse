@@ -1,5 +1,10 @@
 import type { Ref } from 'vue'
 
+export declare function useRollingData<T = any>(
+  list: Array<T>,
+  options?: UseRollingDataOptions
+): UseRollingDataReturnValue
+
 export interface UseRollingDataOptions {
   /**
    * 返回数据的长度
@@ -36,17 +41,17 @@ export interface UseRollingDataReturnValue<T = any> {
   /**
    * 当前数据在原始数据的开始索引
    */
-  index: Ref<Number>
+  index: Ref<number>
   /**
    * 当前数据在原始数据的结束索引
    */
-  endIdex: Ref<Number>
+  endIdex: Ref<number>
   /**
    * 是否开始滚动
    */
-  start: Ref<Boolean>
+  start: Ref<boolean>
   /**
    * Symbol类型的key
    */
-  key: Symbol
+  key: symbol | string
 }

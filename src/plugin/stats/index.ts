@@ -1,0 +1,45 @@
+import type ThreeUse from '@/index'
+import Stats from 'three/examples/jsm/libs/stats.module.js'
+import { useRenderClock } from '@/hooks/other/useRenderClock'
+
+export const stats = {
+  install: (app: ThreeUse, options: any[]) => {
+    const [
+      show = true,
+      followContainer = true
+    ] = options
+
+    if (!show) return
+
+    const stats = new Stats()
+    const statsDom = stats.dom
+
+    if (followContainer) {
+      statsDom.style.setProperty('position', 'absolute')
+      statsDom.style.setProperty('z-index', '9')
+
+      app.subscribe({
+        mount: () => {
+          mount(app.getContainer())
+        },
+        unmount: () => {
+          statsDom.remove()
+        }
+      })
+    } else {
+      mount(document.body)
+    }
+
+    useRenderClock(() => {
+      stats.update()
+    })
+
+    function mount(el: Element) {
+      app.globalProperties.$stats
+        && app.globalProperties.$stats.dom.remove()
+
+      el.appendChild(statsDom)
+      app.globalProperties.$stats = stats
+    }
+  }
+}

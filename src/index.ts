@@ -1,2 +1,4 @@
-export * from './other'
-export * as render from './utils/render'
+import { ThreeUse } from './core/ThreeUse'
+export default ThreeUse
+export * from './core'
+export * from './hooks'

@@ -1,6 +1,6 @@
 {
   "name": "threeuse",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "基于Vue3的Three.js实用组合工具",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -11,10 +11,15 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
+    },
+    "./plugin": {
+      "types": "./dist/plugin.d.ts",
+      "import": "./dist/plugin.mjs",
+      "require": "./dist/plugin.cjs"
     }
   },
   "scripts": {
-    "dev": "initial-scan docs && vitepress dev .docs --host",
+    "dev": "initial-scan docs && vitepress dev .docs --host --port 3333",
     "build": "unbuild",
     "site:build": "initial-scan docs && cross-env NODE_ENV=production vitepress build .docs",
     "serve": "cross-env NODE_ENV=production vitepress serve .docs --host",
@@ -23,7 +28,8 @@
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "lint": "eslint src/**/*.{vue,js,ts,tsx}",
     "lint-fix": "yarn lint -- --fix",
-    "release": "np"
+    "release": "np",
+    "preinstall": "npx only-allow pnpm"
   },
   "keywords": [
     "Vue3",
@@ -46,14 +52,19 @@
     "@ruabick/vite-plugin-gen-api-doc": "latest",
     "@ruabick/vite-plugin-gen-temp": "latest",
     "@ruabick/vitepress-demo-block": "latest",
+    "@types/three": "^0.158.2",
     "@vitejs/plugin-vue": "^3.0.1",
     "cross-env": "^7.0.3",
+    "echarts": "^5.4.3",
     "gh-pages": "^4.0.0",
     "np": "^7.6.2",
+    "three": "^0.158.0",
     "vitepress": "latest",
-    "vue": "^3.3.8"
+    "vue": "^3.3.8",
+    "vue-echarts": "^6.6.1"
   },
   "devDependencies": {
+    "@types/node": "^20.9.5",
     "sass": "^1.69.5",
     "unbuild": "^0.7.6"
   },

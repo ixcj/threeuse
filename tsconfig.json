@@ -22,7 +22,7 @@
             "esnext",
             "dom",
         ],
-        "types": [],
+        "types": ["node"],
         "skipLibCheck": true,
         // "files": "src/index.ts",
         "emitDeclarationOnly": true,
@@ -34,6 +34,9 @@
             ],
             "threeuse": [
                 "src/index.ts"
+            ],
+            "threeuse/plugin": [
+                "src/plugin/index.ts"
             ]
         },
     },

@@ -1,25 +1,37 @@
-import { defineConfig } from 'vitepress';
-import { applyPlugins } from '@ruabick/md-demo-plugins';
-import { genTemp } from '@ruabick/vite-plugin-gen-temp';
-import { genApiDoc } from '@ruabick/vite-plugin-gen-api-doc';
-import { resolve } from 'path';
+import { defineConfig } from 'vitepress'
+import { applyPlugins } from '@ruabick/md-demo-plugins'
+import { genTemp } from '@ruabick/vite-plugin-gen-temp'
+import { genApiDoc } from '@ruabick/vite-plugin-gen-api-doc'
+import { resolve } from 'path'
 
 const Guide = [
   { text: '快速开始', link: '/guide/' },
 ]
 
 const Core = [
-  { text: 'useSkyBox 天空盒', link: '/core/sky-box/' },
+  { text: '创建应用', link: '/core/' },
 ]
 
 const Other = [
-  { text: 'useRollingData 滚动数据', link: '/other/rolling-data/' },
+  { text: 'useRollingData 滚动数据', link: '/hooks/other/rolling-data/' },
+  { text: 'useRenderClock 渲染时钟', link: '/hooks/other/render-clock/' },
+]
+
+const Hooks = [
+  { text: 'useRain 雨', link: '/hooks/rain/' },
+  { text: 'useSkyBox 天空盒', link: '/hooks/sky-box/' },
+  { text: '其他', items: Other },
+]
+
+const Plugins = [
+  { text: 'stats 性能监测', link: '/plugin/stats/' },
 ]
 
 const sidebar = [
   { text: '指引', items: Guide },
-  { text: '功能', items: Core },
-  { text: '其他', items: Other },
+  { text: '核心', items: Core },
+  { text: '功能', items: Hooks },
+  { text: '插件', items: Plugins },
 ]
 
 export default defineConfig({
@@ -32,13 +44,19 @@ export default defineConfig({
     resolve: {
       alias: {
         '@': resolve('./src/'),
-        'threeuse': resolve('./src/index.ts'),
+        'threeuse': resolve('./src/')
       },
     },
+    ssr: {
+      noExternal: [
+        'echarts',
+        'vue-echarts'
+      ]
+    }
   },
   markdown: {
     config: (md) => {
-      applyPlugins(md);
+      applyPlugins(md)
     },
     theme: {
       light: 'github-light',
@@ -46,7 +64,7 @@ export default defineConfig({
     },
   },
   buildEnd() {
-    process.exit(0);
+    process.exit(0)
   },
   themeConfig: {
     sidebar,
@@ -61,4 +79,4 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', href: '/logo.png', type: 'image/svg+xml' }],
   ],
-});
+})
