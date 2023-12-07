@@ -15,7 +15,7 @@ map:
 
 ## 示例
 
-<demo src="./__demo__/BasicUse.vue" title="基本使用" desc="获取屏幕两帧之间的时间差"></demo>
+<demo src="./__demo__/BasicUse.vue" title="基本使用" desc="获取屏幕渲染两帧之间的时间差"></demo>
 
 ## 类型
 

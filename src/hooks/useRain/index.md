@@ -5,13 +5,13 @@ map:
 
 ---
 
-# 雨天
+# 雨
 
 为场景添加下雨效果
 
 ## 示例
 
-<demo src="./__demo__/BasicUse.vue" title="基本使用" desc="下雨天"></demo>
+<demo src="./__demo__/BasicUse.vue" title="基本使用" desc="下雨效果"></demo>
 
 ## 类型
 

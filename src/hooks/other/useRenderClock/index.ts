@@ -3,7 +3,7 @@ import { ref, watchEffect } from 'vue'
 
 let lastUpdatedTimestamp = new Date().getTime()
 
-const registeredRenderFunctionMap = new Map<Key, Fn>()
+export const renderFunctionMap = new Map<Key, Fn>()
 
 function render() {
   const newLastUpdatedTimestamp = new Date().getTime()
@@ -11,8 +11,8 @@ function render() {
 
   lastUpdatedTimestamp = newLastUpdatedTimestamp
 
-  if (registeredRenderFunctionMap.size) {
-    registeredRenderFunctionMap.forEach(fn => fn(timeDifference))
+  if (renderFunctionMap.size) {
+    renderFunctionMap.forEach(fn => fn(timeDifference))
   }
 
   if (typeof window !== "undefined") {
@@ -32,14 +32,19 @@ export function useRenderClock(fn: Fn, options: UseRenderClockOptions = {}): Use
 
   watchEffect(() => {
     if (start.value) {
-      registeredRenderFunctionMap.set(key, fn)
+      renderFunctionMap.set(key, fn)
     } else {
-      registeredRenderFunctionMap.delete(key)
+      unload()
     }
   })
+
+  function unload() {
+    renderFunctionMap.delete(key)
+  }
 
   return {
     start,
     key,
+    unload,
   }
 }

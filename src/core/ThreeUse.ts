@@ -113,8 +113,8 @@ export class ThreeUse {
     return this._controls
   }
 
-  setControls(fn: (camera: PerspectiveCamera, el: Element, target?: [number, number, number]) => any): void {
-    this._controls = fn(this._camera, this.getDom())
+  setControls(controls: any): void {
+    this._controls = controls
   }
 
   getScene(): Scene {
