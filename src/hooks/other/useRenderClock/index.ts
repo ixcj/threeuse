@@ -1,9 +1,11 @@
 import type { Key, Fn, UseRenderClockOptions, UseRenderReturnValue } from './index.d'
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect, reactive } from 'vue'
 
 let lastUpdatedTimestamp = new Date().getTime()
 
-export const renderFunctionMap = new Map<Key, Fn>()
+let myReq: null | number = null
+
+export const renderFunctionMap = reactive(new Map<Key, Fn>())
 
 function render() {
   const newLastUpdatedTimestamp = new Date().getTime()
@@ -16,11 +18,19 @@ function render() {
   }
 
   if (typeof window !== "undefined") {
-    window.requestAnimationFrame(render)
+    myReq = window.requestAnimationFrame(render)
   }
 }
 
-render()
+watchEffect(() => {
+  if (renderFunctionMap.size) {
+    render()
+  } else {
+    if (typeof window !== "undefined") {
+      myReq !== null && window.cancelAnimationFrame(myReq)
+    }
+  }
+})
 
 export function useRenderClock(fn: Fn, options: UseRenderClockOptions = {}): UseRenderReturnValue {
   const {
