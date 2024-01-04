@@ -3,7 +3,7 @@ import { ref, watchEffect, reactive } from 'vue'
 
 let lastUpdatedTimestamp = new Date().getTime()
 
-let myReq: null | number = null
+let requestId: null | number = null
 
 export const renderFunctionMap = reactive(new Map<Key, Fn>())
 
@@ -18,7 +18,7 @@ function render() {
   }
 
   if (typeof window !== "undefined") {
-    myReq = window.requestAnimationFrame(render)
+    !requestId && (requestId = window.requestAnimationFrame(render))
   }
 }
 
@@ -27,7 +27,8 @@ watchEffect(() => {
     render()
   } else {
     if (typeof window !== "undefined") {
-      myReq !== null && window.cancelAnimationFrame(myReq)
+      requestId !== null && window.cancelAnimationFrame(requestId)
+      requestId = null
     }
   }
 })
