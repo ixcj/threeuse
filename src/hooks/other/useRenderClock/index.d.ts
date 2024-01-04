@@ -30,8 +30,4 @@ export interface UseRenderReturnValue {
    * key
    */
   key: symbol | string
-  /**
-   * 卸载
-   */
-  unload: Function
 }

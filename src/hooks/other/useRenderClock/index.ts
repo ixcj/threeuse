@@ -1,7 +1,8 @@
 import type { Key, Fn, UseRenderClockOptions, UseRenderReturnValue } from './index.d'
 import { ref, watchEffect, reactive } from 'vue'
+import { isFunction } from '@/utils/type'
 
-let lastUpdatedTimestamp = new Date().getTime()
+let lastUpdatedTimestamp: number
 
 let requestId: null | number = null
 
@@ -14,20 +15,33 @@ function render() {
   lastUpdatedTimestamp = newLastUpdatedTimestamp
 
   if (renderFunctionMap.size) {
-    renderFunctionMap.forEach(fn => fn(timeDifference))
-  }
-
-  if (typeof window !== "undefined") {
-    !requestId && (requestId = window.requestAnimationFrame(render))
+    if (typeof window !== "undefined") {
+      requestId = window.requestAnimationFrame(render)
+    }
+    
+    if (timeDifference !== 0) {
+      renderFunctionMap.forEach(fn => {
+        if (isFunction(fn)) {
+          try {
+            fn(timeDifference)
+          } catch(err) {
+            console.error(err)
+          }
+        }
+      })
+    }
   }
 }
 
 watchEffect(() => {
   if (renderFunctionMap.size) {
-    render()
+    if (requestId === null) {
+      lastUpdatedTimestamp = new Date().getTime()
+      render()
+    }
   } else {
-    if (typeof window !== "undefined") {
-      requestId !== null && window.cancelAnimationFrame(requestId)
+    if (typeof window !== "undefined" && requestId !== null) {
+      window.cancelAnimationFrame(requestId)
       requestId = null
     }
   }
@@ -45,17 +59,12 @@ export function useRenderClock(fn: Fn, options: UseRenderClockOptions = {}): Use
     if (start.value) {
       renderFunctionMap.set(key, fn)
     } else {
-      unload()
+      renderFunctionMap.delete(key)
     }
   })
-
-  function unload() {
-    renderFunctionMap.delete(key)
-  }
 
   return {
     start,
     key,
-    unload,
   }
 }

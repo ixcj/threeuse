@@ -14,10 +14,9 @@ interface InstallFunction {
   (app: ThreeUse, ...options: any[]): void
 }
 
-type ObserverTyep = 'mount' | 'unmount'
-type ObserverBehavior = { [type in ObserverTyep ]?: Function }
-type GlobalPropertiesKey = string | symbol
-type Plugin = { install: InstallFunction } | InstallFunction
+export type ObserverTyep = 'mount' | 'unmount' | 'resize'
+export type ObserverBehavior = { [type in ObserverTyep ]?: Function }
+export type Plugin = { install: InstallFunction } | InstallFunction
 
 export class ThreeUse {
   private _renderer: WebGLRenderer
@@ -58,7 +57,7 @@ export class ThreeUse {
     height: 0
   }
 
-  public globalProperties: Record<GlobalPropertiesKey, any> = {}
+  public globalProperties: Record<string | symbol, any> = {}
 
   private _customRender: null | undefined | ((scene: Scene, camera: PerspectiveCamera, app: ThreeUse) => void) = undefined
 
@@ -76,6 +75,8 @@ export class ThreeUse {
   private _resize = debounce(() => {
     this._setSize()
     this._setCamera()
+
+    this._notify('resize')
   }, 50, true)
 
   private _render(): void {
@@ -176,7 +177,7 @@ export class ThreeUse {
 
   unSubscribe(behavior: ObserverBehavior) {
     const index = this._eventList.findIndex(item => item === behavior)
-    index >=0 && this._eventList.splice(index, 1)
+    index >= 0 && this._eventList.splice(index, 1)
   }
 }
 
