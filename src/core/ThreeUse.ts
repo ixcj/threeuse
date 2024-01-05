@@ -77,7 +77,7 @@ export class ThreeUse {
     this._setCamera()
 
     this._notify('resize')
-  }, 50, true)
+  }, 16, true)
 
   private _render(): void {
     requestAnimationFrame(this._render.bind(this))
@@ -100,6 +100,10 @@ export class ThreeUse {
         }
       }
     })
+  }
+
+  getRenderer(): WebGLRenderer {
+    return this._renderer
   }
 
   getDom(): HTMLCanvasElement {
