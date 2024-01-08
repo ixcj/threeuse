@@ -14,10 +14,9 @@ interface InstallFunction {
   (app: ThreeUse, ...options: any[]): void
 }
 
-type ObserverTyep = 'mount' | 'unmount'
-type ObserverBehavior = { [type in ObserverTyep ]?: Function }
-type GlobalPropertiesKey = string | symbol
-type Plugin = { install: InstallFunction } | InstallFunction
+export type ObserverTyep = 'mount' | 'unmount' | 'resize'
+export type ObserverBehavior = { [type in ObserverTyep ]?: Function }
+export type Plugin = { install: InstallFunction } | InstallFunction
 
 export class ThreeUse {
   private _renderer: WebGLRenderer
@@ -31,10 +30,10 @@ export class ThreeUse {
 
       cameraPosition = [0, 0, 0],
 
-      fov =  75,
+      fov =  35,
       aspect =  16/9,
-      near =  0.1,
-      far =  1000,
+      near =  0.5,
+      far =  10000,
     } = options
 
     this._scene = new Scene()
@@ -58,7 +57,7 @@ export class ThreeUse {
     height: 0
   }
 
-  public globalProperties: Record<GlobalPropertiesKey, any> = {}
+  public globalProperties: Record<string | symbol, any> = {}
 
   private _customRender: null | undefined | ((scene: Scene, camera: PerspectiveCamera, app: ThreeUse) => void) = undefined
 
@@ -76,12 +75,15 @@ export class ThreeUse {
   private _resize = debounce(() => {
     this._setSize()
     this._setCamera()
-  }, 50, true)
+    this._renderer.setPixelRatio(devicePixelRatio || 1)
+
+    this._notify('resize')
+  }, 16, true)
 
   private _render(): void {
     requestAnimationFrame(this._render.bind(this))
 
-    if (this._customRender instanceof Function) {
+    if (isFunction(this._customRender)) {
       this._customRender(this._scene, this._camera, this)
     } else {
       this._renderer.render(this._scene, this._camera)
@@ -101,6 +103,10 @@ export class ThreeUse {
     })
   }
 
+  getRenderer(): WebGLRenderer {
+    return this._renderer
+  }
+
   getDom(): HTMLCanvasElement {
     return this._renderer.domElement
   }
@@ -113,8 +119,8 @@ export class ThreeUse {
     return this._controls
   }
 
-  setControls(fn: (camera: PerspectiveCamera, el: Element, target?: [number, number, number]) => any): void {
-    this._controls = fn(this._camera, this.getDom())
+  setControls(controls: any): void {
+    this._controls = controls
   }
 
   getScene(): Scene {
@@ -176,7 +182,7 @@ export class ThreeUse {
 
   unSubscribe(behavior: ObserverBehavior) {
     const index = this._eventList.findIndex(item => item === behavior)
-    index >=0 && this._eventList.splice(index, 1)
+    index >= 0 && this._eventList.splice(index, 1)
   }
 }
 

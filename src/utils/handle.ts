@@ -24,31 +24,3 @@ export function debounce(
     }, delay)
   }
 }
-
-export function throttle(
-  func: (...args: any[]) => void,
-  limit: number,
-  immediate: boolean = false
-) {
-  let timeout: NodeJS.Timeout | null;
-  let initialCall = true;
-
-  return function(this: any, ...args: any[]) {
-    const callFunc = () => {
-      timeout = null;
-      if(!immediate) func.apply(this, args);
-    };
-
-    if(immediate) {
-      if(initialCall){
-        func.apply(this, args);
-        initialCall = false;
-      }
-    } else {
-        if(!timeout) func.apply(this, args);
-    }
-
-    clearTimeout(timeout as NodeJS.Timeout);
-    timeout = setTimeout(callFunc, limit);
-  }
-}

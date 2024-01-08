@@ -11,7 +11,7 @@ map:
 
 ## 示例
 
-<demo src="./__demo__/BasicUse.vue" title="基本使用" desc="可控制开始暂停、跳转到指定位置"></demo>
+<demo src="./__demo__/BasicUse.vue" title="基本使用" desc="创建一个带有时间控制的天空盒"></demo>
 
 ## 类型
 

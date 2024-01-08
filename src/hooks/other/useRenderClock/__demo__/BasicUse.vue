@@ -2,10 +2,20 @@
 import { ref } from 'vue'
 import { useRenderClock } from 'threeuse'
 
+const REFRESH_COUNT = 10
+
 const fps = ref(0)
+const refreshIntervalList: number[] = []
 
 const { start } = useRenderClock((d) => {
-  fps.value = Math.round(1000 / d)
+  refreshIntervalList.push(d)
+
+  if (refreshIntervalList.length >= REFRESH_COUNT) {
+    const duration = refreshIntervalList.reduce((s, n) => s + n)
+    const meanInterval = duration / refreshIntervalList.length
+    fps.value = Math.round(1000 / meanInterval)
+    refreshIntervalList.length = 0
+  }
 })
 </script>
 

@@ -1,9 +1,12 @@
 import type { Key, Fn, UseRenderClockOptions, UseRenderReturnValue } from './index.d'
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect, reactive } from 'vue'
+import { isFunction } from '@/utils/type'
 
-let lastUpdatedTimestamp = new Date().getTime()
+let lastUpdatedTimestamp: number
 
-const registeredRenderFunctionMap = new Map<Key, Fn>()
+let requestId: null | number = null
+
+export const renderFunctionMap = reactive(new Map<Key, Fn>())
 
 function render() {
   const newLastUpdatedTimestamp = new Date().getTime()
@@ -11,16 +14,38 @@ function render() {
 
   lastUpdatedTimestamp = newLastUpdatedTimestamp
 
-  if (registeredRenderFunctionMap.size) {
-    registeredRenderFunctionMap.forEach(fn => fn(timeDifference))
-  }
-
-  if (typeof window !== "undefined") {
-    window.requestAnimationFrame(render)
+  if (renderFunctionMap.size) {
+    if (typeof window !== "undefined") {
+      requestId = window.requestAnimationFrame(render)
+    }
+    
+    if (timeDifference !== 0) {
+      renderFunctionMap.forEach(fn => {
+        if (isFunction(fn)) {
+          try {
+            fn(timeDifference)
+          } catch(err) {
+            console.error(err)
+          }
+        }
+      })
+    }
   }
 }
 
-render()
+watchEffect(() => {
+  if (renderFunctionMap.size) {
+    if (requestId === null) {
+      lastUpdatedTimestamp = new Date().getTime()
+      render()
+    }
+  } else {
+    if (typeof window !== "undefined" && requestId !== null) {
+      window.cancelAnimationFrame(requestId)
+      requestId = null
+    }
+  }
+})
 
 export function useRenderClock(fn: Fn, options: UseRenderClockOptions = {}): UseRenderReturnValue {
   const {
@@ -32,9 +57,9 @@ export function useRenderClock(fn: Fn, options: UseRenderClockOptions = {}): Use
 
   watchEffect(() => {
     if (start.value) {
-      registeredRenderFunctionMap.set(key, fn)
+      renderFunctionMap.set(key, fn)
     } else {
-      registeredRenderFunctionMap.delete(key)
+      renderFunctionMap.delete(key)
     }
   })
 

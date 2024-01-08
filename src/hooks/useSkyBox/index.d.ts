@@ -8,25 +8,40 @@ export declare function useSkyBox(
 
 export interface UseSkyBoxOptions {
   /**
-   * 天空盒大小
-   * @defaultValue [4000, 4000, 4000]
+   * 默认值
+   * @defaultValue 0
    */
-  size?: [number, number, number]
+  defaultValue?: number
+  /**
+   * 天空盒大小
+   * @defaultValue 4000
+   */
+  size?: number
   /**
    * 天空盒位置
    * @defaultValue [0, 0, 0]
    */
   position?: [number, number, number]
   /**
-   * 平行光的名称
-   * @defaultValue '_sky_.light'
+   * 阳光（平行光对象）的名称
+   * @defaultValue '_sky_.sunLight'
    */
-  directionalLightName?: string
+  sunLightName?: string
   /**
-   * 需要创建阴影的名称列表
+   * 显示阳光
+   * @defaultValue true
+   */
+  showSunLight?: boolean
+  /**
+   * 需要创建阴影的名称列表，要开启阴影投射必须要将showSunLight设置为true
    * @defaultValue []
    */
   castShadowList?: Array<string>
+  /**
+   * 投射阴影查找上层递归次数
+   * @defaultValue 2
+   */
+  castShadowNumber?: number
   /**
    * 过渡速度，为0时表示不使用过渡
    * @defaultValue 3
@@ -36,43 +51,43 @@ export interface UseSkyBoxOptions {
    * 更新天空后的回调
    * @defaultValue undefined
    */
-  updateCallback?: () => {} | undefined
+  updateCallback?: Function | undefined
 }
 
 export interface UseSkyBoxReturnValue {
   /**
    * 天空盒当前时间
    */
-  skyBoxTime: Ref<number>
+  value: Ref<number>
   /**
    * 控制器
    */
-  control: UseSkyBoxControl
+  control: Ref<UseSkyBoxControl>
 }
 
 export interface UseSkyBoxControl {
   /**
    * 福瑞散射 主要影响天空颜色
    */
-  rayleigh?: number,
+  rayleigh: number,
   /**
    * 浊度
    */
-  turbidity?: number,
+  turbidity: number,
   /**
    * 米氏散射 主要影响光晕
    */
-  mieCoefficient?: number,
+  mieCoefficient: number,
   /**
    * 米氏散射方向
    */
-  mieDirectionalG?: number,
+  mieDirectionalG: number,
   /**
    * 太阳高度
    */
-  elevation?: number,
+  elevation: number,
   /**
    * 方位角度
    */
-  azimuth?: number,
+  azimuth: number,
 }
