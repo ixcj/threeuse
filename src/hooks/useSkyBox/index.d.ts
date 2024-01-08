@@ -8,6 +8,11 @@ export declare function useSkyBox(
 
 export interface UseSkyBoxOptions {
   /**
+   * 默认值
+   * @defaultValue 0
+   */
+  defaultValue?: number
+  /**
    * 天空盒大小
    * @defaultValue 4000
    */

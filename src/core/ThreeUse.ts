@@ -30,10 +30,10 @@ export class ThreeUse {
 
       cameraPosition = [0, 0, 0],
 
-      fov =  75,
+      fov =  35,
       aspect =  16/9,
-      near =  0.1,
-      far =  1000,
+      near =  0.5,
+      far =  10000,
     } = options
 
     this._scene = new Scene()
@@ -75,6 +75,7 @@ export class ThreeUse {
   private _resize = debounce(() => {
     this._setSize()
     this._setCamera()
+    this._renderer.setPixelRatio(devicePixelRatio || 1)
 
     this._notify('resize')
   }, 16, true)
@@ -82,7 +83,7 @@ export class ThreeUse {
   private _render(): void {
     requestAnimationFrame(this._render.bind(this))
 
-    if (this._customRender instanceof Function) {
+    if (isFunction(this._customRender)) {
       this._customRender(this._scene, this._camera, this)
     } else {
       this._renderer.render(this._scene, this._camera)

@@ -53,13 +53,13 @@
     "@ruabick/vite-plugin-gen-temp": "latest",
     "@ruabick/vitepress-demo-block": "latest",
     "@tweenjs/tween.js": "^21.0.0",
-    "@types/three": "^0.158.2",
+    "@types/three": "^0.160.0",
     "@vitejs/plugin-vue": "^3.0.1",
     "cross-env": "^7.0.3",
     "echarts": "^5.4.3",
     "gh-pages": "^4.0.0",
     "np": "^7.6.2",
-    "three": "^0.158.0",
+    "three": "^0.160.0",
     "vitepress": "latest",
     "vue": "^3.3.8",
     "vue-echarts": "^6.6.1"
@@ -71,7 +71,8 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "@ruabick/vite-plugin-gen-api-doc@0.3.3": "patches/@ruabick__vite-plugin-gen-api-doc@0.3.3.patch"
+      "@ruabick/vite-plugin-gen-api-doc@0.3.3": "patches/@ruabick__vite-plugin-gen-api-doc@0.3.3.patch",
+      "@tweenjs/tween.js@21.0.0": "patches/@tweenjs__tween.js@21.0.0.patch"
     }
   }
 }

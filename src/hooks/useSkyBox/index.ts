@@ -10,12 +10,11 @@ import {
   DirectionalLight,
   Mesh,
   Object3D,
-  Object3DEventMap,
   FrontSide,
   MathUtils,
   Color
 } from 'three'
-import { Sky } from 'three/examples/jsm/objects/Sky'
+import { Sky } from 'three/addons/objects/Sky.js'
 import { useRenderClock } from '../other/useRenderClock'
 import { isFunction } from '@/utils/type'
 import TWEEN from '@tweenjs/tween.js'
@@ -27,6 +26,7 @@ export const TIME_RANGE_MEDIAN = TIME_RANGE / 2
 
 export function useSkyBox(scene: Scene, options: UseSkyBoxOptions = {}): UseSkyBoxReturnValue {
   const {
+    defaultValue = 0,
     size = 4000,
     position = [0, 0, 0],
     sunLightName = '_sky_.sunLight',
@@ -38,9 +38,9 @@ export function useSkyBox(scene: Scene, options: UseSkyBoxOptions = {}): UseSkyB
   } = options
 
   // 动画控制
-  let Tween: any = null
+  let tween: any = null
   const { start } = useRenderClock(() => {
-    Tween?.update()
+    tween?.update()
   }, { activate: false })
 
   // 天空盒
@@ -49,9 +49,9 @@ export function useSkyBox(scene: Scene, options: UseSkyBoxOptions = {}): UseSkyB
   sky.scale.setScalar(size)
 
   // 值
-  const value = ref<number>(0)
+  const value = ref<number>(defaultValue)
   // 老的值
-  let oldVal = 0
+  let oldVal = defaultValue
   // 控制器
   const control = ref<UseSkyBoxControl>({
     turbidity: 0,
@@ -95,16 +95,17 @@ export function useSkyBox(scene: Scene, options: UseSkyBoxOptions = {}): UseSkyB
   watch(
     value,
     (newValue, oldValue) => {
-      oldVal = oldValue
+      oldVal = oldValue || defaultValue
 
       control.value = getControlOptions(newValue)
-    }
+    },
+    { immediate: true }
   )
 
   watch(
     control,
     (val) => {
-      Tween?.stop()
+      tween?.stop()
 
       const elevationRatio = val.elevation / 65
 
@@ -140,7 +141,7 @@ export function useSkyBox(scene: Scene, options: UseSkyBoxOptions = {}): UseSkyB
 
       if (transitionSpeed) {
         start.value = true
-        Tween = new TWEEN.Tween(before)
+        tween = new TWEEN.Tween(before)
           .to(after)
           .duration(Math.abs(value.value - oldVal) * transitionSpeed)
           .easing(TWEEN.Easing.Linear.None)
@@ -210,7 +211,7 @@ function createSunLight(name: string, size: number = 4000) {
 // 是否是子元素
 function isChildren(
   castShadowList: string[],
-  node: Object3D<Object3DEventMap>,
+  node: Object3D,
   level: number = 2
 ): boolean {
   if (castShadowList.includes(node.name)) {

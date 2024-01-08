@@ -9,7 +9,7 @@ import {
   PlaneGeometry,
 } from 'three'
 
-const app = createApp({ cameraPosition: [-5, 2, 10] })
+const app = createApp({ cameraPosition: [0.74, 4.53, -26.56] })
 const scene = app.getScene()
 
 const geometry = new BoxGeometry(1, 1, 1)
@@ -24,7 +24,7 @@ cube.name = 'cube'
 cube.position.setY(1)
 scene.add(cube)
 
-const floorGeo = new PlaneGeometry(1000, 1000, 1, 1)
+const floorGeo = new PlaneGeometry(2000, 2000, 1, 1)
 const floorMaterial = new MeshBasicMaterial({ color: '#aaaaaa' })
 const floor = new Mesh(floorGeo, floorMaterial)
 floor.rotateX(Math.PI / -2)

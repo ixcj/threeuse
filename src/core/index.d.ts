@@ -22,7 +22,7 @@ export interface CreateAppOptions {
   
   /**
    * 相机fov参数
-   * @defaultValue 75
+   * @defaultValue 35
    */
   fov?: number
   /**
@@ -32,12 +32,12 @@ export interface CreateAppOptions {
   aspect?: number
   /**
    * 相机near参数
-   * @defaultValue 0.1
+   * @defaultValue 0.5
    */
   near?: number
   /**
    * 相机far参数
-   * @defaultValue 1000
+   * @defaultValue 10000
    */
   far?: number
 }
