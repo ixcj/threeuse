@@ -1,9 +1,10 @@
 import type {
   UseSkyBoxOptions,
   UseSkyBoxReturnValue,
-  UseSkyBoxControl
+  UseSkyBoxControl,
+  SetControlOption
 } from './index.d'
-import { ref, watch } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import {
   Scene,
   Vector3,
@@ -16,7 +17,7 @@ import {
 } from 'three'
 import { Sky } from 'three/addons/objects/Sky.js'
 import { useRenderClock } from '../other/useRenderClock'
-import { isFunction } from '@/utils/type'
+import { isFunction, isObject } from '@/utils/type'
 import TWEEN from '@tweenjs/tween.js'
 
 export const TIME_MIN = 0
@@ -33,7 +34,7 @@ export function useSkyBox(scene: Scene, options: UseSkyBoxOptions = {}): UseSkyB
     showSunLight = true,
     castShadowList = [],
     castShadowNumber = 2,
-    transitionSpeed = 3,
+    durationMultiple = 3,
     updateCallback = undefined,
   } = options
 
@@ -53,7 +54,7 @@ export function useSkyBox(scene: Scene, options: UseSkyBoxOptions = {}): UseSkyB
   // 老的值
   let oldVal = defaultValue
   // 控制器
-  const control = ref<UseSkyBoxControl>({
+  const control = reactive<UseSkyBoxControl>({
     turbidity: 0,
     rayleigh: 0.223,
     mieCoefficient: 0,
@@ -97,7 +98,7 @@ export function useSkyBox(scene: Scene, options: UseSkyBoxOptions = {}): UseSkyB
     (newValue, oldValue) => {
       oldVal = oldValue || defaultValue
 
-      control.value = getControlOptions(newValue)
+      setControlOption(getControlOptions(newValue))
     },
     { immediate: true }
   )
@@ -139,11 +140,11 @@ export function useSkyBox(scene: Scene, options: UseSkyBoxOptions = {}): UseSkyB
         percent: Math.abs(TIME_RANGE - value.value) / TIME_RANGE,
       }
 
-      if (transitionSpeed) {
+      if (durationMultiple) {
         start.value = true
         tween = new TWEEN.Tween(before)
           .to(after)
-          .duration(Math.abs(value.value - oldVal) * transitionSpeed)
+          .duration(Math.abs(value.value - oldVal) * durationMultiple)
           .easing(TWEEN.Easing.Linear.None)
           .onUpdate((params) => onUpdate(params, updateCallback))
           .onComplete(() => {
@@ -182,9 +183,19 @@ export function useSkyBox(scene: Scene, options: UseSkyBoxOptions = {}): UseSkyB
     } 
   }
 
+  function setControlOption(option: SetControlOption): void {
+    if (isObject(option)) {
+      Object.keys(option).forEach((key: keyof SetControlOption) => {
+        const data = option[key]
+        data && (control[key] = data)
+      })
+    }
+  }
+
   return {
     value,
     control,
+    setControlOption
   }
 }
 

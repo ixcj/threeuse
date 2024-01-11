@@ -14,6 +14,10 @@ export const stats = {
     const stats = new Stats()
     const statsDom = stats.dom
 
+    const { start } = useRenderClock(() => {
+      stats.update()
+    }, { activate: false })
+
     if (followContainer) {
       statsDom.style.setProperty('position', 'absolute')
       statsDom.style.setProperty('z-index', '9')
@@ -24,15 +28,12 @@ export const stats = {
         },
         unmount: () => {
           statsDom.remove()
+          start.value = false
         }
       })
     } else {
       mount(document.body)
     }
-
-    useRenderClock(() => {
-      stats.update()
-    })
 
     function mount(el: Element) {
       app.globalProperties.$stats
@@ -40,6 +41,7 @@ export const stats = {
 
       el.appendChild(statsDom)
       app.globalProperties.$stats = stats
+      start.value = true
     }
   }
 }

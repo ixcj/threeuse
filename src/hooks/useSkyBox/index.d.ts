@@ -43,10 +43,10 @@ export interface UseSkyBoxOptions {
    */
   castShadowNumber?: number
   /**
-   * 过渡速度，为0时表示不使用过渡
+   * 过渡时间倍率，为0时表示不使用过渡。值越大，过渡越慢
    * @defaultValue 3
    */
-  transitionSpeed?: number
+  durationMultiple?: number
   /**
    * 更新天空后的回调
    * @defaultValue undefined
@@ -62,7 +62,13 @@ export interface UseSkyBoxReturnValue {
   /**
    * 控制器
    */
-  control: Ref<UseSkyBoxControl>
+  control: UseSkyBoxControl,
+  /**
+   * 设置控制器
+   * @param SetControlOption 要设置的控制器配置项
+   * @returns 控制器配置项
+   */
+  setControlOption: (SetControlOption) => void
 }
 
 export interface UseSkyBoxControl {
@@ -90,4 +96,8 @@ export interface UseSkyBoxControl {
    * 方位角度
    */
   azimuth: number,
+}
+
+export type SetControlOption = {
+  [P in keyof UseSkyBoxControl]?: UseSkyBoxControl[P]
 }

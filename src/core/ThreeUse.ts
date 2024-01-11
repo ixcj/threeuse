@@ -45,6 +45,7 @@ export class ThreeUse {
       antialias: true,
       failIfMajorPerformanceCaveat: true,
     })
+    this._renderer.shadowMap.enabled = true
     this._renderer.setClearColor(new Color(clearColor))
   }
 
