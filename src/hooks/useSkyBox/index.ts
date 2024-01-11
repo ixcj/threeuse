@@ -236,14 +236,14 @@ function isChildren(
 
 // 使用时间获取控制器配置
 function getControlOptions(time: number): UseSkyBoxControl {
-  if (time === TIME_MIN) time = TIME_MIN + 1;
-  if (time === TIME_MAX) time = TIME_MAX - 1;
+  if (time === TIME_MIN) time = TIME_MIN + 1
+  if (time === TIME_MAX) time = TIME_MAX - 1
 
-  const value = time / TIME_RANGE;
-  const medianValue = time / TIME_RANGE_MEDIAN;
+  const value = time / TIME_RANGE
+  const medianValue = time / TIME_RANGE_MEDIAN
 
-  const medianRatio = 1 - ((time - TIME_RANGE_MEDIAN) / TIME_RANGE_MEDIAN);
-  const absMedianRatio = 1 - (Math.abs(time - TIME_RANGE_MEDIAN) / TIME_RANGE_MEDIAN);
+  const medianRatio = 1 - ((time - TIME_RANGE_MEDIAN) / TIME_RANGE_MEDIAN)
+  const absMedianRatio = 1 - (Math.abs(time - TIME_RANGE_MEDIAN) / TIME_RANGE_MEDIAN)
 
   if (time >= 0) {
     return {

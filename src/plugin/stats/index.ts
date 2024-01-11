@@ -3,7 +3,7 @@ import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { useRenderClock } from '@/hooks/other/useRenderClock'
 
 export const stats = {
-  install: (app: ThreeUse, options: any[]) => {
+  install: (app: ThreeUse, options: [boolean?, boolean?]) => {
     const [
       show = true,
       followContainer = true

@@ -19,11 +19,11 @@ export function formattedDecimal(n: number, d: number = 2) {
 export function getRandomNumber(min: number, max: number, decimals: number = 0) {
   const multiple = Math.pow(10, decimals)
 
-  min = Math.ceil(min * multiple);
-  max = Math.floor(max * multiple);
+  min = Math.ceil(min * multiple)
+  max = Math.floor(max * multiple)
 
   const differenceValue = max - min
-  const n = Math.random() * differenceValue + min;
+  const n = Math.random() * differenceValue + min
 
-  return Math.round(n) / multiple;
+  return Math.round(n) / multiple
 }

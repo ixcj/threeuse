@@ -25,6 +25,7 @@ const Hooks = [
 
 const Plugins = [
   { text: 'stats 性能监测', link: '/plugin/stats/' },
+  { text: 'cameraRange 相机范围', link: '/plugin/cameraRange/' },
 ]
 
 const sidebar = [
