@@ -3,7 +3,7 @@ import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { useRenderClock } from '@/hooks/other/useRenderClock'
 
 export const stats = {
-  install: (app: ThreeUse, options: any[]) => {
+  install: (app: ThreeUse, options: [boolean?, boolean?]) => {
     const [
       show = true,
       followContainer = true
@@ -13,6 +13,10 @@ export const stats = {
 
     const stats = new Stats()
     const statsDom = stats.dom
+
+    const { start } = useRenderClock(() => {
+      stats.update()
+    }, { activate: false })
 
     if (followContainer) {
       statsDom.style.setProperty('position', 'absolute')
@@ -24,15 +28,12 @@ export const stats = {
         },
         unmount: () => {
           statsDom.remove()
+          start.value = false
         }
-      })
+      }, 'ThreeUse.Plugin.Stats')
     } else {
       mount(document.body)
     }
-
-    useRenderClock(() => {
-      stats.update()
-    })
 
     function mount(el: Element) {
       app.globalProperties.$stats
@@ -40,6 +41,7 @@ export const stats = {
 
       el.appendChild(statsDom)
       app.globalProperties.$stats = stats
+      start.value = true
     }
   }
 }

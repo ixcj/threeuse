@@ -14,7 +14,7 @@ onMounted(() => app.mount('#app-container'))
   <div id="app-container">
     <div class="time-box">
       <div>{{ value }}</div>
-      <input type="range" v-model="value" min="0" max="720">
+      <input type="range" v-model="value" min="-1" max="720">
     </div>
   </div>
 </template>

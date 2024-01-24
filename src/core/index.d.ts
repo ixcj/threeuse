@@ -1,5 +1,5 @@
 import type { ThreeUse } from './ThreeUse'
-import type { ColorRepresentation } from 'three'
+import type * as THREE from 'three'
 
 export declare function createApp(
   options?: CreateAppOptions
@@ -12,7 +12,7 @@ export interface CreateAppOptions {
    * 画布颜色
    * @defaultValue #181818
    */
-  clearColor?: ColorRepresentation
+  clearColor?: THREE.ColorRepresentation
 
   /**
    * 相机初始位置
@@ -40,6 +40,11 @@ export interface CreateAppOptions {
    * @defaultValue 10000
    */
   far?: number
+  /**
+   * 色彩空间
+   * @defaultValue THREE.LinearSRGBColorSpace
+   */
+  outputColorSpace?: THREE.ColorSpace
 }
 
 export interface CreateAppReturnValue extends ThreeUse {

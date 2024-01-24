@@ -1,8 +1,8 @@
 import type { Ref } from 'vue'
-import type { Scene } from 'three'
+import type * as THREE from 'three'
 
 export declare function useSkyBox(
-  scene: Scene,
+  scene: THREE.Scene,
   options?: UseSkyBoxOptions
 ): UseSkyBoxReturnValue
 
@@ -43,10 +43,10 @@ export interface UseSkyBoxOptions {
    */
   castShadowNumber?: number
   /**
-   * 过渡速度，为0时表示不使用过渡
+   * 过渡时间倍率，为0时表示不使用过渡。值越大，过渡越慢
    * @defaultValue 3
    */
-  transitionSpeed?: number
+  durationMultiple?: number
   /**
    * 更新天空后的回调
    * @defaultValue undefined

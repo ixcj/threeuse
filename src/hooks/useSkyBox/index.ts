@@ -1,7 +1,7 @@
 import type {
   UseSkyBoxOptions,
   UseSkyBoxReturnValue,
-  UseSkyBoxControl
+  UseSkyBoxControl,
 } from './index.d'
 import { ref, watch } from 'vue'
 import {
@@ -14,9 +14,10 @@ import {
   MathUtils,
   Color
 } from 'three'
-import { Sky } from 'three/addons/objects/Sky.js'
+import { Sky } from 'three/examples/jsm/objects/Sky.js'
 import { useRenderClock } from '../other/useRenderClock'
 import { isFunction } from '@/utils/type'
+import { formattedDecimal } from '@/utils/math'
 import TWEEN from '@tweenjs/tween.js'
 
 export const TIME_MIN = 0
@@ -33,7 +34,7 @@ export function useSkyBox(scene: Scene, options: UseSkyBoxOptions = {}): UseSkyB
     showSunLight = true,
     castShadowList = [],
     castShadowNumber = 2,
-    transitionSpeed = 3,
+    durationMultiple = 3,
     updateCallback = undefined,
   } = options
 
@@ -139,11 +140,11 @@ export function useSkyBox(scene: Scene, options: UseSkyBoxOptions = {}): UseSkyB
         percent: Math.abs(TIME_RANGE - value.value) / TIME_RANGE,
       }
 
-      if (transitionSpeed) {
+      if (durationMultiple) {
         start.value = true
         tween = new TWEEN.Tween(before)
           .to(after)
-          .duration(Math.abs(value.value - oldVal) * transitionSpeed)
+          .duration(Math.abs(value.value - oldVal) * durationMultiple)
           .easing(TWEEN.Easing.Linear.None)
           .onUpdate((params) => onUpdate(params, updateCallback))
           .onComplete(() => {
@@ -225,23 +226,23 @@ function isChildren(
 
 // 使用时间获取控制器配置
 function getControlOptions(time: number): UseSkyBoxControl {
-  if (time === TIME_MIN) time = TIME_MIN + 1;
-  if (time === TIME_MAX) time = TIME_MAX - 1;
+  if (time === TIME_MIN) time = TIME_MIN + 1
+  if (time === TIME_MAX) time = TIME_MAX - 1
 
-  const value = time / TIME_RANGE;
-  const medianValue = time / TIME_RANGE_MEDIAN;
+  const value = time / TIME_RANGE
+  const medianValue = time / TIME_RANGE_MEDIAN
 
-  const medianRatio = 1 - ((time - TIME_RANGE_MEDIAN) / TIME_RANGE_MEDIAN);
-  const absMedianRatio = 1 - (Math.abs(time - TIME_RANGE_MEDIAN) / TIME_RANGE_MEDIAN);
+  const medianRatio = 1 - ((time - TIME_RANGE_MEDIAN) / TIME_RANGE_MEDIAN)
+  const absMedianRatio = 1 - (Math.abs(time - TIME_RANGE_MEDIAN) / TIME_RANGE_MEDIAN)
 
   if (time >= 0) {
     return {
-      turbidity: value * 10,
-      rayleigh: .223 + value * 3 * medianValue,
-      mieCoefficient: value * medianRatio * 0.2,
-      mieDirectionalG: value * (200 * medianRatio),
-      elevation: absMedianRatio * 65,
-      azimuth: 200 - medianRatio * 90
+      turbidity: formattedDecimal(value * 10),
+      rayleigh: formattedDecimal(0.233 + value * 3 * medianValue),
+      mieCoefficient: formattedDecimal(value * medianRatio * 0.3),
+      mieDirectionalG: formattedDecimal(value * (200 * medianRatio)),
+      elevation: formattedDecimal(absMedianRatio * 65),
+      azimuth: formattedDecimal(200 - medianRatio * 90)
     }
   } else {
     return {
