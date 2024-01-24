@@ -2,20 +2,46 @@
 
 const vue = require('vue');
 
-let lastUpdatedTimestamp = new Date().getTime();
-const registeredRenderFunctionMap = /* @__PURE__ */ new Map();
+const isFunction = (val) => typeof val === "function";
+const isString = (val) => typeof val === "string";
+
+let lastUpdatedTimestamp;
+let requestId = null;
+const renderFunctionMap = vue.reactive(/* @__PURE__ */ new Map());
 function render() {
   const newLastUpdatedTimestamp = new Date().getTime();
   const timeDifference = newLastUpdatedTimestamp - lastUpdatedTimestamp;
   lastUpdatedTimestamp = newLastUpdatedTimestamp;
-  if (registeredRenderFunctionMap.size) {
-    registeredRenderFunctionMap.forEach((fn) => fn(timeDifference));
-  }
-  if (typeof window !== "undefined") {
-    window.requestAnimationFrame(render);
+  if (renderFunctionMap.size) {
+    if (typeof window !== "undefined") {
+      requestId = window.requestAnimationFrame(render);
+    }
+    if (timeDifference !== 0) {
+      renderFunctionMap.forEach((fn) => {
+        if (isFunction(fn)) {
+          try {
+            fn(timeDifference);
+          } catch (err) {
+            console.error(err);
+          }
+        }
+      });
+    }
   }
 }
-render();
+vue.watchEffect(() => {
+  if (renderFunctionMap.size) {
+    if (requestId === null) {
+      lastUpdatedTimestamp = new Date().getTime();
+      render();
+    }
+  } else {
+    if (typeof window !== "undefined" && requestId !== null) {
+      window.cancelAnimationFrame(requestId);
+      requestId = null;
+    }
+  }
+});
 function useRenderClock(fn, options = {}) {
   const {
     key = Symbol(),
@@ -24,9 +50,9 @@ function useRenderClock(fn, options = {}) {
   const start = vue.ref(activate);
   vue.watchEffect(() => {
     if (start.value) {
-      registeredRenderFunctionMap.set(key, fn);
+      renderFunctionMap.set(key, fn);
     } else {
-      registeredRenderFunctionMap.delete(key);
+      renderFunctionMap.delete(key);
     }
   });
   return {
@@ -35,4 +61,7 @@ function useRenderClock(fn, options = {}) {
   };
 }
 
+exports.isFunction = isFunction;
+exports.isString = isString;
+exports.renderFunctionMap = renderFunctionMap;
 exports.useRenderClock = useRenderClock;

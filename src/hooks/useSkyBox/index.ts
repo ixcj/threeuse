@@ -14,7 +14,7 @@ import {
   MathUtils,
   Color
 } from 'three'
-import { Sky } from 'three/addons/objects/Sky.js'
+import { Sky } from 'three/examples/jsm/objects/Sky.js'
 import { useRenderClock } from '../other/useRenderClock'
 import { isFunction } from '@/utils/type'
 import { formattedDecimal } from '@/utils/math'

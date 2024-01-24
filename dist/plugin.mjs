@@ -3,7 +3,7 @@ import { u as useRenderClock } from './chunks/index.mjs';
 import 'vue';
 
 const stats = {
-  install: (app, ...options) => {
+  install: (app, options) => {
     const [
       show = true,
       followContainer = true
@@ -11,26 +11,60 @@ const stats = {
     if (!show)
       return;
     const stats2 = new Stats();
-    app.globalProperties.$stats = stats2;
-    app.globalProperties.$stats.showPanel(0);
-    const statsDom = app.globalProperties.$stats.dom;
+    const statsDom = stats2.dom;
+    const { start } = useRenderClock(() => {
+      stats2.update();
+    }, { activate: false });
     if (followContainer) {
+      statsDom.style.setProperty("position", "absolute");
+      statsDom.style.setProperty("z-index", "9");
       app.subscribe({
         mount: () => {
-          statsDom.style.setProperty("position", "absolute");
-          app.getContainer().appendChild(statsDom);
+          mount(app.getContainer());
         },
         unmount: () => {
           statsDom.remove();
+          start.value = false;
         }
-      });
+      }, "ThreeUse.Plugin.Stats");
     } else {
-      document.body.appendChild(statsDom);
+      mount(document.body);
     }
-    useRenderClock(() => {
-      stats2.update();
-    });
+    function mount(el) {
+      app.globalProperties.$stats && app.globalProperties.$stats.dom.remove();
+      el.appendChild(statsDom);
+      app.globalProperties.$stats = stats2;
+      start.value = true;
+    }
   }
 };
 
-export { stats };
+const cameraRange = {
+  install: (app, options) => {
+    const [
+      range = {
+        x: { min: -1950, max: 1950 },
+        y: { min: 1, max: 1950 },
+        z: { min: -1950, max: 1950 }
+      }
+    ] = options;
+    const camera = app.getCamera();
+    const { start } = useRenderClock(() => {
+      Object.keys(range).forEach((key) => {
+        const { min, max } = range[key];
+        camera.position[key] < min && (camera.position[key] = min);
+        camera.position[key] > max && (camera.position[key] = max);
+      });
+    }, { activate: app.mounted });
+    app.subscribe({
+      mount: () => {
+        start.value = true;
+      },
+      unmount: () => {
+        start.value = false;
+      }
+    }, "ThreeUse.Plugin.CameraRange");
+  }
+};
+
+export { cameraRange, stats };

@@ -1,87 +1,7 @@
-import { ColorRepresentation, Scene, PerspectiveCamera } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { T as ThreeUse } from './ThreeUse-088febe1.js';
+export { T as default } from './ThreeUse-088febe1.js';
+import * as THREE from 'three';
 import { Ref } from 'vue';
-
-interface CreateAppOptions$1 {
-  /**
-   * 画布颜色
-   * @defaultValue #181818
-   */
-  clearColor?: ColorRepresentation
-
-  /**
-   * 相机初始位置
-   * @defaultValue [0, 0, 0]
-   */
-  cameraPosition?: [number, number, number]
-  /**
-   * 控制器target初始位置
-   * @defaultValue [0, 0, 0]
-   */
-  targetPosition?: [number, number, number]
-  
-  /**
-   * 相机fov参数
-   * @defaultValue 75
-   */
-  fov?: number
-  /**
-   * 相机aspect参数
-   * @defaultValue 16/9
-   */
-  aspect?: number
-  /**
-   * 相机near参数
-   * @defaultValue 0.1
-   */
-  near?: number
-  /**
-   * 相机far参数
-   * @defaultValue 1000
-   */
-  far?: number
-}
-
-interface InstallFunction {
-    (app: ThreeUse, ...options: any[]): void;
-}
-type ObserverTyep = 'mount' | 'unmount';
-type ObserverBehavior = {
-    [type in ObserverTyep]?: Function;
-};
-type GlobalPropertiesKey = string | symbol;
-type Plugin = {
-    install: InstallFunction;
-} | InstallFunction;
-declare class ThreeUse {
-    private _renderer;
-    private _scene;
-    private _camera;
-    private _controls;
-    constructor(options?: CreateAppOptions$1);
-    private _container;
-    private _resizeObserver;
-    private _eventList;
-    private _subscribe;
-    private _size;
-    globalProperties: Record<GlobalPropertiesKey, any>;
-    private _customRender;
-    private _setSize;
-    private _setCamera;
-    private _resize;
-    private _render;
-    private _notify;
-    getDom(): Element;
-    getContainer(): Element;
-    getControls(): OrbitControls;
-    getScene(): Scene;
-    getCamera(): PerspectiveCamera;
-    use(plugin: Plugin, ...options: any[]): this;
-    mount(rootContainer: Element | string): this;
-    unmount(): this;
-    subscribe(behavior: ObserverBehavior): ObserverBehavior;
-    unSubscribe(behavior: ObserverBehavior): void;
-}
 
 declare function createApp(
   options?: CreateAppOptions
@@ -94,22 +14,17 @@ interface CreateAppOptions {
    * 画布颜色
    * @defaultValue #181818
    */
-  clearColor?: ColorRepresentation
+  clearColor?: THREE.ColorRepresentation
 
   /**
    * 相机初始位置
    * @defaultValue [0, 0, 0]
    */
   cameraPosition?: [number, number, number]
-  /**
-   * 控制器target初始位置
-   * @defaultValue [0, 0, 0]
-   */
-  targetPosition?: [number, number, number]
   
   /**
    * 相机fov参数
-   * @defaultValue 75
+   * @defaultValue 35
    */
   fov?: number
   /**
@@ -119,14 +34,19 @@ interface CreateAppOptions {
   aspect?: number
   /**
    * 相机near参数
-   * @defaultValue 0.1
+   * @defaultValue 0.5
    */
   near?: number
   /**
    * 相机far参数
-   * @defaultValue 1000
+   * @defaultValue 10000
    */
   far?: number
+  /**
+   * 色彩空间
+   * @defaultValue THREE.LinearSRGBColorSpace
+   */
+  outputColorSpace?: THREE.ColorSpace
 }
 
 interface CreateAppReturnValue extends ThreeUse {
@@ -222,79 +142,94 @@ interface UseRenderReturnValue {
 }
 
 declare function useSkyBox(
-  scene: Scene,
+  scene: THREE.Scene,
   options?: UseSkyBoxOptions
 ): UseSkyBoxReturnValue
 
 interface UseSkyBoxOptions {
   /**
-   * 天空盒大小
-   * @defaultValue [4000, 4000, 4000]
+   * 默认值
+   * @defaultValue 0
    */
-  size?: [number, number, number]
+  defaultValue?: number
+  /**
+   * 天空盒大小
+   * @defaultValue 4000
+   */
+  size?: number
   /**
    * 天空盒位置
    * @defaultValue [0, 0, 0]
    */
   position?: [number, number, number]
   /**
-   * 平行光的名称
-   * @defaultValue '_sky_.light'
+   * 阳光（平行光对象）的名称
+   * @defaultValue '_sky_.sunLight'
    */
-  directionalLightName?: string
+  sunLightName?: string
   /**
-   * 需要创建阴影的名称列表
+   * 显示阳光
+   * @defaultValue true
+   */
+  showSunLight?: boolean
+  /**
+   * 需要创建阴影的名称列表，要开启阴影投射必须要将showSunLight设置为true
    * @defaultValue []
    */
   castShadowList?: Array<string>
   /**
-   * 过渡速度，为0时表示不使用过渡
+   * 投射阴影查找上层递归次数
+   * @defaultValue 2
+   */
+  castShadowNumber?: number
+  /**
+   * 过渡时间倍率，为0时表示不使用过渡。值越大，过渡越慢
    * @defaultValue 3
    */
-  transitionSpeed?: number
+  durationMultiple?: number
   /**
    * 更新天空后的回调
    * @defaultValue undefined
    */
-  updateCallback?: () => {} | undefined
+  updateCallback?: Function | undefined
 }
 
 interface UseSkyBoxReturnValue {
   /**
    * 天空盒当前时间
    */
-  skyBoxTime: Ref<number>
+  value: Ref<number>
   /**
    * 控制器
    */
-  control: UseSkyBoxControl
+  control: Ref<UseSkyBoxControl>
 }
 
 interface UseSkyBoxControl {
   /**
    * 福瑞散射 主要影响天空颜色
    */
-  rayleigh?: number,
+  rayleigh: number,
   /**
    * 浊度
    */
-  turbidity?: number,
+  turbidity: number,
   /**
    * 米氏散射 主要影响光晕
    */
-  mieCoefficient?: number,
+  mieCoefficient: number,
   /**
    * 米氏散射方向
    */
-  mieDirectionalG?: number,
+  mieDirectionalG: number,
   /**
    * 太阳高度
    */
-  elevation?: number,
+  elevation: number,
   /**
    * 方位角度
    */
-  azimuth?: number,
+  azimuth: number,
 }
 
-export { CreateAppOptions, CreateAppReturnValue, Fn, Key, ObjType, UseRenderClockOptions, UseRenderReturnValue, UseRollingDataOptions, UseRollingDataReturnValue, UseSkyBoxControl, UseSkyBoxOptions, UseSkyBoxReturnValue, createApp, ThreeUse as default, useRender, useRollingData, useSkyBox };
+export { CreateAppOptions, CreateAppReturnValue, Fn, Key, ObjType, UseRenderClockOptions, UseRenderReturnValue, UseRollingDataOptions, UseRollingDataReturnValue, UseSkyBoxControl, UseSkyBoxOptions, UseSkyBoxReturnValue, createApp, useRender, useRollingData, useSkyBox };
