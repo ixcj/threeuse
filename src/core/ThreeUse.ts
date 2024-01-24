@@ -55,13 +55,13 @@ export class ThreeUse {
 
   private _container: Element
   private _resizeObserver = new ResizeObserver(() => this._resize())
-  private _eventList: ObserverBehavior[] = []
-  private _subscribe: WeakMap<Object, ObserverBehavior> = new WeakMap()
+  private _subscribe: Map<Symbol | string, ObserverBehavior> = new Map()
   private _size: { width: number, height: number } = {
     width: 0,
     height: 0
   }
 
+  public mounted: boolean = false
   public globalProperties: Record<string | symbol, any> = {}
 
   private _customRender: null | undefined | ((scene: Scene, camera: PerspectiveCamera, app: ThreeUse) => void) = undefined
@@ -77,14 +77,6 @@ export class ThreeUse {
     this._renderer.setSize(this._size.width, this._size.height)
   }
 
-  private _resize = debounce(() => {
-    this._setSize()
-    this._setCamera()
-    this._renderer.setPixelRatio(devicePixelRatio || 1)
-
-    this._notify('resize')
-  }, 16, true)
-
   private _render(): void {
     requestAnimationFrame(this._render.bind(this))
 
@@ -96,8 +88,9 @@ export class ThreeUse {
   }
 
   private _notify(notifyType: ObserverTyep) {
-    this._eventList.forEach(behavior => {
+    this._subscribe.forEach((behavior) => {
       const fn = behavior[notifyType]
+
       if (isFunction(fn)) {
         try {
           fn()
@@ -107,6 +100,14 @@ export class ThreeUse {
       }
     })
   }
+
+  private _resize = debounce(() => {
+    this._setSize()
+    this._setCamera()
+    this._renderer.setPixelRatio(devicePixelRatio || 1)
+
+    this._notify('resize')
+  }, 16, true)
 
   getRenderer(): WebGLRenderer {
     return this._renderer
@@ -124,16 +125,18 @@ export class ThreeUse {
     return this._controls
   }
 
-  setControls(controls: any): void {
-    this._controls = controls
-  }
-
   getScene(): Scene {
     return this._scene
   }
 
   getCamera(): PerspectiveCamera {
     return this._camera
+  }
+
+  setControls(controls: any): this {
+    this._controls = controls
+
+    return this
   }
   
   use(plugin: Plugin, ...options: any[]): this {
@@ -153,8 +156,10 @@ export class ThreeUse {
       this._container = container
       this._resizeObserver.observe(this._container)
       container.appendChild(this.getDom())
-      this._render()
+      this.mounted = true
+
       this._resize()
+      this._render()
 
       if (!this._controls) {
         this._controls = new OrbitControls(this._camera, this.getDom())
@@ -171,6 +176,7 @@ export class ThreeUse {
     const domElement = this.getDom()
     if (domElement) {
       domElement.remove()
+      this.mounted = true
 
       this._notify('unmount')
     }
@@ -178,16 +184,14 @@ export class ThreeUse {
     return this
   }
 
-  subscribe(behavior: ObserverBehavior): ObserverBehavior {
-    this._eventList.push(behavior)
-    this._subscribe.set(behavior, behavior)
+  subscribe(behavior: ObserverBehavior, key: Symbol | string = Symbol()): Symbol | string {
+    this._subscribe.set(key, behavior)
 
-    return behavior
+    return key
   }
 
-  unSubscribe(behavior: ObserverBehavior) {
-    const index = this._eventList.findIndex(item => item === behavior)
-    index >= 0 && this._eventList.splice(index, 1)
+  unSubscribe(key: Symbol | string): void {
+    this._subscribe.delete(key)
   }
 }
 

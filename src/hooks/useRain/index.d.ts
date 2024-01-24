@@ -1,8 +1,8 @@
 import type { Ref } from 'vue'
-import type { Scene } from 'three'
+import type * as THREE from 'three'
 
 export declare function useRain(
-  scene: Scene,
+  scene: THREE.Scene,
   options?: UseRainOptions
 ): UseRainReturnValue
 

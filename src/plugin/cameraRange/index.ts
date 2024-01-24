@@ -20,13 +20,22 @@ export const cameraRange = {
 
     const camera = app.getCamera()
 
-    useRenderClock(() => {
+    const { start } = useRenderClock(() => {
       Object.keys(range).forEach((key: keyof CameraRange) => {
         const { min, max } = range[key];
   
         (camera.position[key] < min) && (camera.position[key] = min);
         (camera.position[key] > max) && (camera.position[key] = max);
       })
-    })
+    }, { activate: app.mounted })
+
+    app.subscribe({
+      mount: () => {
+        start.value = true
+      },
+      unmount: () => {
+        start.value = false
+      }
+    }, 'ThreeUse.Plugin.CameraRange')
   }
 }
