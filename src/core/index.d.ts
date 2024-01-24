@@ -1,5 +1,5 @@
 import type { ThreeUse } from './ThreeUse'
-import type { ColorRepresentation } from 'three'
+import type { ColorRepresentation, ColorSpace } from 'three'
 
 export declare function createApp(
   options?: CreateAppOptions
@@ -40,6 +40,11 @@ export interface CreateAppOptions {
    * @defaultValue 10000
    */
   far?: number
+  /**
+   * 色彩空间
+   * @defaultValue LinearSRGBColorSpace
+   */
+  outputColorSpace?: ColorSpace
 }
 
 export interface CreateAppReturnValue extends ThreeUse {

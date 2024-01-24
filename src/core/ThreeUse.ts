@@ -6,6 +6,7 @@ import {
   WebGLRenderer,
   Color,
   Vector3,
+  LinearSRGBColorSpace,
 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { debounce } from '@/utils/handle'
@@ -34,6 +35,8 @@ export class ThreeUse {
       aspect =  16/9,
       near =  0.5,
       far =  10000,
+
+      outputColorSpace = LinearSRGBColorSpace
     } = options
 
     this._scene = new Scene()
@@ -46,6 +49,7 @@ export class ThreeUse {
       failIfMajorPerformanceCaveat: true,
     })
     this._renderer.shadowMap.enabled = true
+    this._renderer.outputColorSpace = outputColorSpace
     this._renderer.setClearColor(new Color(clearColor))
   }
 

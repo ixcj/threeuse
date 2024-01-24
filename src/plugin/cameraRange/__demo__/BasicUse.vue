@@ -11,14 +11,14 @@ import {
 } from 'three'
 
 const range: CameraRange = {
-  x: { min: -49, max: 49 },
-  y: { min: 1, max: 49 },
-  z: { min: -49, max: 49 },
+  x: { min: -499, max: 499 },
+  y: { min: -499, max: 499 },
+  z: { min: -499, max: 499 },
 }
 
 const app = createApp({ cameraPosition: [5, 5, 5] }).use(cameraRange, range)
 
-const geometry = new BoxGeometry(100, 100, 100)
+const geometry = new BoxGeometry(1000, 1000, 1000)
 const mats = []
 for(let i = 0; i < 6; i++){
   let material = new MeshBasicMaterial({
