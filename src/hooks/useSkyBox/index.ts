@@ -2,9 +2,8 @@ import type {
   UseSkyBoxOptions,
   UseSkyBoxReturnValue,
   UseSkyBoxControl,
-  SetControlOption
 } from './index.d'
-import { ref, reactive, watch } from 'vue'
+import { ref, watch } from 'vue'
 import {
   Scene,
   Vector3,
@@ -17,7 +16,8 @@ import {
 } from 'three'
 import { Sky } from 'three/addons/objects/Sky.js'
 import { useRenderClock } from '../other/useRenderClock'
-import { isFunction, isObject } from '@/utils/type'
+import { isFunction } from '@/utils/type'
+import { formattedDecimal } from '@/utils/math'
 import TWEEN from '@tweenjs/tween.js'
 
 export const TIME_MIN = 0
@@ -54,7 +54,7 @@ export function useSkyBox(scene: Scene, options: UseSkyBoxOptions = {}): UseSkyB
   // 老的值
   let oldVal = defaultValue
   // 控制器
-  const control = reactive<UseSkyBoxControl>({
+  const control = ref<UseSkyBoxControl>({
     turbidity: 0,
     rayleigh: 0.223,
     mieCoefficient: 0,
@@ -98,7 +98,7 @@ export function useSkyBox(scene: Scene, options: UseSkyBoxOptions = {}): UseSkyB
     (newValue, oldValue) => {
       oldVal = oldValue || defaultValue
 
-      setControlOption(getControlOptions(newValue))
+      control.value = getControlOptions(newValue)
     },
     { immediate: true }
   )
@@ -183,19 +183,9 @@ export function useSkyBox(scene: Scene, options: UseSkyBoxOptions = {}): UseSkyB
     } 
   }
 
-  function setControlOption(option: SetControlOption): void {
-    if (isObject(option)) {
-      Object.keys(option).forEach((key: keyof SetControlOption) => {
-        const data = option[key]
-        data && (control[key] = data)
-      })
-    }
-  }
-
   return {
     value,
     control,
-    setControlOption
   }
 }
 
@@ -247,12 +237,12 @@ function getControlOptions(time: number): UseSkyBoxControl {
 
   if (time >= 0) {
     return {
-      turbidity: value * 10,
-      rayleigh: .223 + value * 3 * medianValue,
-      mieCoefficient: value * medianRatio * 0.2,
-      mieDirectionalG: value * (200 * medianRatio),
-      elevation: absMedianRatio * 65,
-      azimuth: 200 - medianRatio * 90
+      turbidity: formattedDecimal(value * 10),
+      rayleigh: formattedDecimal(0.233 + value * 3 * medianValue),
+      mieCoefficient: formattedDecimal(value * medianRatio * 0.3),
+      mieDirectionalG: formattedDecimal(value * (200 * medianRatio)),
+      elevation: formattedDecimal(absMedianRatio * 65),
+      azimuth: formattedDecimal(200 - medianRatio * 90)
     }
   } else {
     return {

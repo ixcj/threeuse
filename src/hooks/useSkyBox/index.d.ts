@@ -62,13 +62,7 @@ export interface UseSkyBoxReturnValue {
   /**
    * 控制器
    */
-  control: UseSkyBoxControl,
-  /**
-   * 设置控制器
-   * @param SetControlOption 要设置的控制器配置项
-   * @returns 控制器配置项
-   */
-  setControlOption: (SetControlOption) => void
+  control: Ref<UseSkyBoxControl>
 }
 
 export interface UseSkyBoxControl {
@@ -96,8 +90,4 @@ export interface UseSkyBoxControl {
    * 方位角度
    */
   azimuth: number,
-}
-
-export type SetControlOption = {
-  [P in keyof UseSkyBoxControl]?: UseSkyBoxControl[P]
 }
