@@ -16,20 +16,23 @@ const { start } = useRenderClock((d) => {
     fps.value = Math.round(1000 / meanInterval)
     refreshIntervalList.length = 0
   }
-})
+}, { activate: false })
 
-function switchingState() {
+function handleStart() {
   start.value = !start.value
 
-  if (!start.value) fps.value = 0
+  if (!start.value) {
+    fps.value = 0
+    refreshIntervalList.length = 0
+  }
 }
 </script>
 
 <template>
   <div>
-    页面刷新率：<span>{{ fps }}</span>
+    页面刷新率：<span>{{ start ? fps : '未开始' }}</span>
     <div class="btn-box">
-      <button @click="switchingState">{{ start ? '暂停' : '开始' }}</button>
+      <button @click="handleStart">{{ start ? '暂停' : '开始' }}</button>
     </div>
   </div>
 </template>
