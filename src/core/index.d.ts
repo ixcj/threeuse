@@ -5,7 +5,7 @@ export declare function createApp(
   options?: CreateAppOptions
 ): CreateAppReturnValue
 
-export type ObjType = { [key: string | symbol]: any }
+export type GlobalPropertiesType = { [key: string | symbol]: any }
 
 export interface CreateAppOptions {
   /**
@@ -13,13 +13,11 @@ export interface CreateAppOptions {
    * @defaultValue #181818
    */
   clearColor?: THREE.ColorRepresentation
-
   /**
    * 相机初始位置
    * @defaultValue [0, 0, 0]
    */
   cameraPosition?: [number, number, number]
-  
   /**
    * 相机fov参数
    * @defaultValue 35

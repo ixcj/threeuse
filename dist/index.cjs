@@ -4,9 +4,9 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 const index = require('./chunks/index.cjs');
 const three = require('three');
-const OrbitControls_js = require('three/examples/jsm/controls/OrbitControls.js');
+const OrbitControls = require('three/examples/jsm/controls/OrbitControls');
 const vue = require('vue');
-const Sky_js = require('three/examples/jsm/objects/Sky.js');
+const Sky = require('three/examples/jsm/objects/Sky');
 const TWEEN = require('@tweenjs/tween.js');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e["default"] : e; }
@@ -40,12 +40,16 @@ class ThreeUse {
     this.mounted = false;
     this.globalProperties = {};
     this._customRender = void 0;
-    this._resize = debounce(() => {
-      this._setSize();
-      this._setCamera();
-      this._renderer.setPixelRatio(devicePixelRatio || 1);
-      this._notify("resize");
-    }, 16, true);
+    this._resize = debounce(
+      () => {
+        this._setSize();
+        this._setCamera();
+        this._renderer.setPixelRatio(devicePixelRatio || 1);
+        this._notify("resize");
+      },
+      16,
+      true
+    );
     const {
       clearColor = "#181818",
       cameraPosition = [0, 0, 0],
@@ -136,7 +140,7 @@ class ThreeUse {
       this._resize();
       this._render();
       if (!this._controls) {
-        this._controls = new OrbitControls_js.OrbitControls(this._camera, this.getDom());
+        this._controls = new OrbitControls.OrbitControls(this._camera, this.getDom());
         this._controls.target = new three.Vector3(0, 0, 0);
       }
       this._notify("mount");
@@ -262,7 +266,7 @@ function useSkyBox(scene, options = {}) {
   const { start } = index.useRenderClock(() => {
     tween?.update();
   }, { activate: false });
-  const sky = new Sky_js.Sky();
+  const sky = new Sky.Sky();
   sky.name = "_sky_.box";
   sky.scale.setScalar(size);
   const value = vue.ref(defaultValue);

@@ -20,7 +20,7 @@ export const stats = {
 
     if (followContainer) {
       statsDom.style.setProperty('position', 'absolute')
-      statsDom.style.setProperty('z-index', '9')
+      statsDom.style.setProperty('z-index', '9999')
 
       app.subscribe({
         mount: () => {

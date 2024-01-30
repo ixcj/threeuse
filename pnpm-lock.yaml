@@ -8,9 +8,6 @@ patchedDependencies:
   '@ruabick/vite-plugin-gen-api-doc@0.3.3':
     hash: 4q56nskmgql7xwhevzd65rg36q
     path: patches/@ruabick__vite-plugin-gen-api-doc@0.3.3.patch
-  '@tweenjs/tween.js@21.0.0':
-    hash: oej5qt35oozqvgheyetqjcxhnq
-    path: patches/@tweenjs__tween.js@21.0.0.patch
 
 dependencies:
   '@ruabick/md-demo-plugins':
@@ -26,8 +23,8 @@ dependencies:
     specifier: latest
     version: 0.3.3
   '@tweenjs/tween.js':
-    specifier: ^21.0.0
-    version: 21.0.0(patch_hash=oej5qt35oozqvgheyetqjcxhnq)
+    specifier: ^21.1.1
+    version: 21.1.1
   '@types/three':
     specifier: ^0.160.0
     version: 0.160.0
@@ -1064,10 +1061,9 @@ packages:
       path-browserify: 1.0.1
     dev: false
 
-  /@tweenjs/tween.js@21.0.0(patch_hash=oej5qt35oozqvgheyetqjcxhnq):
-    resolution: {integrity: sha512-qVfOiFh0U8ZSkLgA6tf7kj2MciqRbSCWaJZRwftVO7UbtVDNsZAXpWXqvCDtIefvjC83UJB+vHTDOGm5ibXjEA==}
+  /@tweenjs/tween.js@21.1.1:
+    resolution: {integrity: sha512-O2GetAwEC/0MOiRb3lxCLIt/eeugoDPX0nu+1SFWLqGKf835ZdWsfM9RzDpjF+aKkpYMhvOnEhO+SxMnHHjpfw==}
     dev: false
-    patched: true
 
   /@types/cacheable-request@6.0.3:
     resolution: {integrity: sha512-IQ3EbTzGxIigb1I3qPZc1rWJnH0BmSKv5QYTalEwweFvyBDLSAe24zP0le/hyi7ecGfZVlIVAg4BZqb8WBwKqw==}

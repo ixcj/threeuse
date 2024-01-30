@@ -44,7 +44,7 @@ interface CreateAppOptions {
 interface InstallFunction {
     (app: ThreeUse, ...options: any[]): void;
 }
-type ObserverTyep = 'mount' | 'unmount' | 'resize';
+type ObserverTyep = "mount" | "unmount" | "resize";
 type ObserverBehavior = {
     [type in ObserverTyep]?: Function;
 };

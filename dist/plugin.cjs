@@ -2,7 +2,7 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-const Stats = require('three/examples/jsm/libs/stats.module.js');
+const Stats = require('three/examples/jsm/libs/stats.module');
 const index = require('./chunks/index.cjs');
 require('vue');
 

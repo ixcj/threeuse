@@ -1,9 +1,9 @@
 import { i as isFunction, a as isString, u as useRenderClock } from './chunks/index.mjs';
 export { r as renderFunctionMap, u as useRenderClock } from './chunks/index.mjs';
 import { Scene, PerspectiveCamera, WebGLRenderer, Color, Vector3, LinearSRGBColorSpace, Mesh, FrontSide, MathUtils, DirectionalLight } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { ref, computed, watchEffect, watch } from 'vue';
-import { Sky } from 'three/examples/jsm/objects/Sky.js';
+import { Sky } from 'three/examples/jsm/objects/Sky';
 import TWEEN from '@tweenjs/tween.js';
 
 function debounce(func, delay, immediate = false) {
@@ -33,12 +33,16 @@ class ThreeUse {
     this.mounted = false;
     this.globalProperties = {};
     this._customRender = void 0;
-    this._resize = debounce(() => {
-      this._setSize();
-      this._setCamera();
-      this._renderer.setPixelRatio(devicePixelRatio || 1);
-      this._notify("resize");
-    }, 16, true);
+    this._resize = debounce(
+      () => {
+        this._setSize();
+        this._setCamera();
+        this._renderer.setPixelRatio(devicePixelRatio || 1);
+        this._notify("resize");
+      },
+      16,
+      true
+    );
     const {
       clearColor = "#181818",
       cameraPosition = [0, 0, 0],

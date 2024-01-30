@@ -1,5 +1,5 @@
-import type { CreateAppOptions } from '../core/index.d'
-import { isString, isFunction } from '@/utils/type'
+import type { CreateAppOptions } from "../core/index.d"
+import { isString, isFunction } from "@/utils/type"
 import {
   Scene,
   PerspectiveCamera,
@@ -7,36 +7,38 @@ import {
   Color,
   Vector3,
   LinearSRGBColorSpace,
-} from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { debounce } from '@/utils/handle'
+} from "three"
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
+import { debounce } from "@/utils/handle"
 
+// interface
 interface InstallFunction {
   (app: ThreeUse, ...options: any[]): void
 }
 
-export type ObserverTyep = 'mount' | 'unmount' | 'resize'
-export type ObserverBehavior = { [type in ObserverTyep ]?: Function }
+// type
+export type ObserverTyep = "mount" | "unmount" | "resize"
+export type ObserverBehavior = { [type in ObserverTyep]?: Function }
 export type Plugin = { install: InstallFunction } | InstallFunction
 
 export class ThreeUse {
+  // 需要初始化的私有属性
   private _renderer: WebGLRenderer
   private _scene: Scene
   private _camera: PerspectiveCamera
-  private _controls: any
 
   constructor(options: CreateAppOptions = {}) {
     const {
-      clearColor = '#181818',
+      clearColor = "#181818",
 
       cameraPosition = [0, 0, 0],
 
-      fov =  35,
-      aspect =  16/9,
-      near =  0.5,
-      far =  10000,
+      fov = 35,
+      aspect = 16 / 9,
+      near = 0.5,
+      far = 10000,
 
-      outputColorSpace = LinearSRGBColorSpace
+      outputColorSpace = LinearSRGBColorSpace,
     } = options
 
     this._scene = new Scene()
@@ -53,20 +55,29 @@ export class ThreeUse {
     this._renderer.setClearColor(new Color(clearColor))
   }
 
+  // 私有属性
+  private _controls: any
   private _container: Element
   private _resizeObserver = new ResizeObserver(() => this._resize())
-  private _subscribe: Map<Symbol | string, ObserverBehavior> = new Map()
-  private _size: { width: number, height: number } = {
+  private _subscribe: Map<symbol | string, ObserverBehavior> = new Map()
+  private _size: { width: number; height: number } = {
     width: 0,
-    height: 0
+    height: 0,
   }
 
+  // 公共属性
   public mounted: boolean = false
+  public enableCustomRender: boolean = false
   public globalProperties: Record<string | symbol, any> = {}
 
-  private _customRender: null | undefined | ((scene: Scene, camera: PerspectiveCamera, app: ThreeUse) => void) = undefined
+  // 私有方法
+  private _customRender:
+    | null
+    | undefined
+    | ((scene: Scene, camera: PerspectiveCamera, app: ThreeUse) => void) =
+    undefined
 
-  private _setSize(): void {    
+  private _setSize(): void {
     this._size.width = this._container?.clientWidth || 0
     this._size.height = this._container?.clientHeight || 0
   }
@@ -80,35 +91,40 @@ export class ThreeUse {
   private _render(): void {
     requestAnimationFrame(this._render.bind(this))
 
-    if (isFunction(this._customRender)) {
+    if (this.enableCustomRender && isFunction(this._customRender)) {
       this._customRender(this._scene, this._camera, this)
     } else {
       this._renderer.render(this._scene, this._camera)
     }
   }
 
-  private _notify(notifyType: ObserverTyep) {
+  private _notify(notifyType: ObserverTyep, data?: unknown) {
     this._subscribe.forEach((behavior) => {
       const fn = behavior[notifyType]
 
       if (isFunction(fn)) {
         try {
-          fn()
-        } catch(err) {
+          data ? fn(data) : fn()
+        } catch (err) {
           console.error(err)
         }
       }
     })
   }
 
-  private _resize = debounce(() => {
-    this._setSize()
-    this._setCamera()
-    this._renderer.setPixelRatio(devicePixelRatio || 1)
+  private _resize = debounce(
+    () => {
+      this._setSize()
+      this._setCamera()
+      this._renderer.setPixelRatio(devicePixelRatio || 1)
 
-    this._notify('resize')
-  }, 16, true)
+      this._notify("resize")
+    },
+    16,
+    true
+  )
 
+  // 公共方法
   getRenderer(): WebGLRenderer {
     return this._renderer
   }
@@ -133,12 +149,12 @@ export class ThreeUse {
     return this._camera
   }
 
-  setControls(controls: any): this {
+  setControls(controls: unknown): this {
     this._controls = controls
 
     return this
   }
-  
+
   use(plugin: Plugin, ...options: any[]): this {
     if (isFunction(plugin)) {
       plugin(this, options)
@@ -166,7 +182,7 @@ export class ThreeUse {
         this._controls.target = new Vector3(0, 0, 0)
       }
 
-      this._notify('mount')
+      this._notify("mount")
     }
 
     return this
@@ -178,29 +194,30 @@ export class ThreeUse {
       domElement.remove()
       this.mounted = true
 
-      this._notify('unmount')
+      this._notify("unmount")
     }
 
     return this
   }
 
-  subscribe(behavior: ObserverBehavior, key: Symbol | string = Symbol()): Symbol | string {
+  subscribe(
+    behavior: ObserverBehavior,
+    key: symbol | string = Symbol()
+  ): symbol | string {
     this._subscribe.set(key, behavior)
 
     return key
   }
 
-  unSubscribe(key: Symbol | string): void {
+  unSubscribe(key: symbol | string): void {
     this._subscribe.delete(key)
   }
 }
 
-function normalizeContainer(
-  container: Element | string
-): Element | null {
+function normalizeContainer(container: Element | string): Element | null {
   if (isString(container)) {
     return document.querySelector(container)
   }
-  
+
   return container
 }
