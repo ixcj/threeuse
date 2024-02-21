@@ -1,5 +1,5 @@
-import { T as ThreeUse } from './ThreeUse-c363346c.js';
-export { T as default } from './ThreeUse-c363346c.js';
+import { T as ThreeUse } from './ThreeUse-e81179dd.js';
+export { T as default } from './ThreeUse-e81179dd.js';
 import * as THREE from 'three';
 import { Ref } from 'vue';
 
@@ -7,7 +7,7 @@ declare function createApp(
   options?: CreateAppOptions
 ): CreateAppReturnValue
 
-type ObjType = { [key: string | symbol]: any }
+type GlobalPropertiesType = { [key: string | symbol]: any }
 
 interface CreateAppOptions {
   /**
@@ -15,13 +15,11 @@ interface CreateAppOptions {
    * @defaultValue #181818
    */
   clearColor?: THREE.ColorRepresentation
-
   /**
    * 相机初始位置
    * @defaultValue [0, 0, 0]
    */
   cameraPosition?: [number, number, number]
-  
   /**
    * 相机fov参数
    * @defaultValue 35
@@ -232,4 +230,4 @@ interface UseSkyBoxControl {
   azimuth: number,
 }
 
-export { CreateAppOptions, CreateAppReturnValue, Fn, Key, ObjType, UseRenderClockOptions, UseRenderReturnValue, UseRollingDataOptions, UseRollingDataReturnValue, UseSkyBoxControl, UseSkyBoxOptions, UseSkyBoxReturnValue, createApp, useRender, useRollingData, useSkyBox };
+export { CreateAppOptions, CreateAppReturnValue, Fn, GlobalPropertiesType, Key, UseRenderClockOptions, UseRenderReturnValue, UseRollingDataOptions, UseRollingDataReturnValue, UseSkyBoxControl, UseSkyBoxOptions, UseSkyBoxReturnValue, createApp, useRender, useRollingData, useSkyBox };

@@ -2,7 +2,7 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-const Stats = require('three/examples/jsm/libs/stats.module');
+const Stats = require('three/examples/jsm/libs/stats.module.js');
 const index = require('./chunks/index.cjs');
 require('vue');
 
@@ -25,7 +25,7 @@ const stats = {
     }, { activate: false });
     if (followContainer) {
       statsDom.style.setProperty("position", "absolute");
-      statsDom.style.setProperty("z-index", "9");
+      statsDom.style.setProperty("z-index", "9999");
       app.subscribe({
         mount: () => {
           mount(app.getContainer());

@@ -1,4 +1,4 @@
-import Stats from 'three/examples/jsm/libs/stats.module';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 import { u as useRenderClock } from './chunks/index.mjs';
 import 'vue';
 
@@ -17,7 +17,7 @@ const stats = {
     }, { activate: false });
     if (followContainer) {
       statsDom.style.setProperty("position", "absolute");
-      statsDom.style.setProperty("z-index", "9");
+      statsDom.style.setProperty("z-index", "9999");
       app.subscribe({
         mount: () => {
           mount(app.getContainer());

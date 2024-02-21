@@ -1,9 +1,9 @@
 import { i as isFunction, a as isString, u as useRenderClock } from './chunks/index.mjs';
 export { r as renderFunctionMap, u as useRenderClock } from './chunks/index.mjs';
 import { Scene, PerspectiveCamera, WebGLRenderer, Color, Vector3, LinearSRGBColorSpace, Mesh, FrontSide, MathUtils, DirectionalLight } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { ref, computed, watchEffect, watch } from 'vue';
-import { Sky } from 'three/examples/jsm/objects/Sky';
+import { Sky } from 'three/examples/jsm/objects/Sky.js';
 import TWEEN from '@tweenjs/tween.js';
 
 function debounce(func, delay, immediate = false) {
@@ -31,14 +31,17 @@ class ThreeUse {
       height: 0
     };
     this.mounted = false;
+    this.enableCustomRender = false;
     this.globalProperties = {};
     this._customRender = void 0;
     this._resize = debounce(
       () => {
-        this._setSize();
-        this._setCamera();
-        this._renderer.setPixelRatio(devicePixelRatio || 1);
-        this._notify("resize");
+        if (this.mounted) {
+          this._setSize();
+          this._setCamera();
+          this._renderer.setPixelRatio(devicePixelRatio || 1);
+          this._notify("resize");
+        }
       },
       16,
       true
@@ -75,18 +78,18 @@ class ThreeUse {
   }
   _render() {
     requestAnimationFrame(this._render.bind(this));
-    if (isFunction(this._customRender)) {
+    if (this.enableCustomRender && isFunction(this._customRender)) {
       this._customRender(this._scene, this._camera, this);
     } else {
       this._renderer.render(this._scene, this._camera);
     }
   }
-  _notify(notifyType) {
+  _notify(notifyType, data) {
     this._subscribe.forEach((behavior) => {
       const fn = behavior[notifyType];
       if (isFunction(fn)) {
         try {
-          fn();
+          data ? fn(data) : fn();
         } catch (err) {
           console.error(err);
         }
@@ -133,8 +136,8 @@ class ThreeUse {
       this._resize();
       this._render();
       if (!this._controls) {
-        this._controls = new OrbitControls(this._camera, this.getDom());
-        this._controls.target = new Vector3(0, 0, 0);
+        this.setControls(new OrbitControls(this._camera, this.getDom()));
+        this.getControls().target = new Vector3(0, 0, 0);
       }
       this._notify("mount");
     }
@@ -174,9 +177,10 @@ function createApp(options = {}) {
   return proxyApp;
 }
 
-function formattedDecimal(n, d = 2) {
-  const multiple = Math.pow(10, d);
-  return Math.round(n * multiple) / multiple;
+function formattedDecimal(num, decimals = 2, mode = "round") {
+  const multiple = Math.pow(10, decimals);
+  const modeMethod = ["round", "floor", "ceil"].includes(mode) ? Math[mode] : Math.round;
+  return modeMethod(num * multiple) / multiple;
 }
 
 function useRollingData(data, options = {}) {

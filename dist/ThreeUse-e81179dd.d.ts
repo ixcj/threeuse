@@ -7,13 +7,11 @@ interface CreateAppOptions {
    * @defaultValue #181818
    */
   clearColor?: THREE.ColorRepresentation
-
   /**
    * 相机初始位置
    * @defaultValue [0, 0, 0]
    */
   cameraPosition?: [number, number, number]
-  
   /**
    * 相机fov参数
    * @defaultValue 35
@@ -55,13 +53,14 @@ declare class ThreeUse {
     private _renderer;
     private _scene;
     private _camera;
-    private _controls;
     constructor(options?: CreateAppOptions);
+    private _controls;
     private _container;
     private _resizeObserver;
     private _subscribe;
     private _size;
     mounted: boolean;
+    enableCustomRender: boolean;
     globalProperties: Record<string | symbol, any>;
     private _customRender;
     private _setSize;
@@ -72,15 +71,15 @@ declare class ThreeUse {
     getRenderer(): WebGLRenderer;
     getDom(): HTMLCanvasElement;
     getContainer(): Element;
-    getControls(): any;
+    getControls<T = any>(): T;
     getScene(): Scene;
     getCamera(): PerspectiveCamera;
-    setControls(controls: any): this;
+    setControls(controls: unknown): this;
     use(plugin: Plugin, ...options: any[]): this;
     mount(rootContainer: Element | string): this;
     unmount(): this;
-    subscribe(behavior: ObserverBehavior, key?: Symbol | string): Symbol | string;
-    unSubscribe(key: Symbol | string): void;
+    subscribe(behavior: ObserverBehavior, key?: symbol | string): symbol | string;
+    unSubscribe(key: symbol | string): void;
 }
 
 export { ThreeUse as T };

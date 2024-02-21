@@ -4,9 +4,9 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 const index = require('./chunks/index.cjs');
 const three = require('three');
-const OrbitControls = require('three/examples/jsm/controls/OrbitControls');
+const OrbitControls_js = require('three/examples/jsm/controls/OrbitControls.js');
 const vue = require('vue');
-const Sky = require('three/examples/jsm/objects/Sky');
+const Sky_js = require('three/examples/jsm/objects/Sky.js');
 const TWEEN = require('@tweenjs/tween.js');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e["default"] : e; }
@@ -38,14 +38,17 @@ class ThreeUse {
       height: 0
     };
     this.mounted = false;
+    this.enableCustomRender = false;
     this.globalProperties = {};
     this._customRender = void 0;
     this._resize = debounce(
       () => {
-        this._setSize();
-        this._setCamera();
-        this._renderer.setPixelRatio(devicePixelRatio || 1);
-        this._notify("resize");
+        if (this.mounted) {
+          this._setSize();
+          this._setCamera();
+          this._renderer.setPixelRatio(devicePixelRatio || 1);
+          this._notify("resize");
+        }
       },
       16,
       true
@@ -82,18 +85,18 @@ class ThreeUse {
   }
   _render() {
     requestAnimationFrame(this._render.bind(this));
-    if (index.isFunction(this._customRender)) {
+    if (this.enableCustomRender && index.isFunction(this._customRender)) {
       this._customRender(this._scene, this._camera, this);
     } else {
       this._renderer.render(this._scene, this._camera);
     }
   }
-  _notify(notifyType) {
+  _notify(notifyType, data) {
     this._subscribe.forEach((behavior) => {
       const fn = behavior[notifyType];
       if (index.isFunction(fn)) {
         try {
-          fn();
+          data ? fn(data) : fn();
         } catch (err) {
           console.error(err);
         }
@@ -140,8 +143,8 @@ class ThreeUse {
       this._resize();
       this._render();
       if (!this._controls) {
-        this._controls = new OrbitControls.OrbitControls(this._camera, this.getDom());
-        this._controls.target = new three.Vector3(0, 0, 0);
+        this.setControls(new OrbitControls_js.OrbitControls(this._camera, this.getDom()));
+        this.getControls().target = new three.Vector3(0, 0, 0);
       }
       this._notify("mount");
     }
@@ -181,9 +184,10 @@ function createApp(options = {}) {
   return proxyApp;
 }
 
-function formattedDecimal(n, d = 2) {
-  const multiple = Math.pow(10, d);
-  return Math.round(n * multiple) / multiple;
+function formattedDecimal(num, decimals = 2, mode = "round") {
+  const multiple = Math.pow(10, decimals);
+  const modeMethod = ["round", "floor", "ceil"].includes(mode) ? Math[mode] : Math.round;
+  return modeMethod(num * multiple) / multiple;
 }
 
 function useRollingData(data, options = {}) {
@@ -266,7 +270,7 @@ function useSkyBox(scene, options = {}) {
   const { start } = index.useRenderClock(() => {
     tween?.update();
   }, { activate: false });
-  const sky = new Sky.Sky();
+  const sky = new Sky_js.Sky();
   sky.name = "_sky_.box";
   sky.scale.setScalar(size);
   const value = vue.ref(defaultValue);

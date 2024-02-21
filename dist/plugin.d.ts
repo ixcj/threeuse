@@ -1,4 +1,4 @@
-import { T as ThreeUse } from './ThreeUse-c363346c.js';
+import { T as ThreeUse } from './ThreeUse-e81179dd.js';
 import 'three';
 
 declare const stats: {

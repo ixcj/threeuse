@@ -56,7 +56,7 @@ export class ThreeUse {
   }
 
   // 私有属性
-  private _controls: any
+  private _controls: unknown
   private _container: Element
   private _resizeObserver = new ResizeObserver(() => this._resize())
   private _subscribe: Map<symbol | string, ObserverBehavior> = new Map()
@@ -139,8 +139,8 @@ export class ThreeUse {
     return this._container
   }
 
-  getControls(): any {
-    return this._controls
+  getControls<T = any>(): T {
+    return this._controls as T
   }
 
   getScene(): Scene {
@@ -180,8 +180,8 @@ export class ThreeUse {
       this._render()
 
       if (!this._controls) {
-        this._controls = new OrbitControls(this._camera, this.getDom())
-        this._controls.target = new Vector3(0, 0, 0)
+        this.setControls(new OrbitControls(this._camera, this.getDom()))
+        this.getControls<OrbitControls>().target = new Vector3(0, 0, 0)
       }
 
       this._notify("mount")
