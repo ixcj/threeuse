@@ -114,11 +114,13 @@ export class ThreeUse {
 
   private _resize = debounce(
     () => {
-      this._setSize()
-      this._setCamera()
-      this._renderer.setPixelRatio(devicePixelRatio || 1)
+      if (this.mounted) {
+        this._setSize()
+        this._setCamera()
+        this._renderer.setPixelRatio(devicePixelRatio || 1)
 
-      this._notify("resize")
+        this._notify("resize")
+      }
     },
     16,
     true
