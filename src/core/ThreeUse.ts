@@ -17,8 +17,9 @@ interface InstallFunction {
 }
 
 // type
-export type ObserverTyep = "mount" | "unmount" | "resize"
-export type ObserverBehavior = { [type in ObserverTyep]?: Function }
+export type Listener = (...args: any[]) => void
+export type Events = Record<string, Listener[]>
+export type Behavior = Record<string, Listener>
 export type Plugin = { install: InstallFunction } | InstallFunction
 
 export class ThreeUse {
@@ -58,12 +59,9 @@ export class ThreeUse {
   // 私有属性
   private _controls: unknown
   private _container: Element
+  private _events: Events = {}
   private _resizeObserver = new ResizeObserver(() => this._resize())
-  private _subscribe: Map<symbol | string, ObserverBehavior> = new Map()
-  private _size: { width: number; height: number } = {
-    width: 0,
-    height: 0,
-  }
+  private _size = { width: 0, height: 0 }
 
   // 公共属性
   public mounted: boolean = false
@@ -98,20 +96,6 @@ export class ThreeUse {
     }
   }
 
-  private _notify(notifyType: ObserverTyep, data?: unknown) {
-    this._subscribe.forEach((behavior) => {
-      const fn = behavior[notifyType]
-
-      if (isFunction(fn)) {
-        try {
-          data ? fn(data) : fn()
-        } catch (err) {
-          console.error(err)
-        }
-      }
-    })
-  }
-
   private _resize = debounce(
     () => {
       if (this.mounted) {
@@ -119,7 +103,7 @@ export class ThreeUse {
         this._setCamera()
         this._renderer.setPixelRatio(devicePixelRatio || 1)
 
-        this._notify("resize")
+        this.send("resize")
       }
     },
     16,
@@ -184,7 +168,7 @@ export class ThreeUse {
         this.getControls<OrbitControls>().target = new Vector3(0, 0, 0)
       }
 
-      this._notify("mount")
+      this.send("mount")
     }
 
     return this
@@ -196,23 +180,46 @@ export class ThreeUse {
       domElement.remove()
       this.mounted = true
 
-      this._notify("unmount")
+      this.send("unmount")
     }
 
     return this
   }
 
-  subscribe(
-    behavior: ObserverBehavior,
-    key: symbol | string = Symbol()
-  ): symbol | string {
-    this._subscribe.set(key, behavior)
+  on(eventName: string, listener: Listener): void {
+    if (!this._events[eventName]) {
+      this._events[eventName] = []
+    }
 
-    return key
+    this._events[eventName].push(listener)
   }
 
-  unSubscribe(key: symbol | string): void {
-    this._subscribe.delete(key)
+  off(eventName: string, listenerToRemove: Listener): void {
+    if (!this._events[eventName]) return
+
+    this._events[eventName] = this._events[eventName].filter(
+      (listener: Listener) => listener !== listenerToRemove
+    )
+  }
+  
+  send(eventName: string, ...args: any[]): void {
+    if (this._events[eventName]) {
+      this._events[eventName].forEach((listener) => {
+        listener(...args)
+      })
+    }
+  }
+
+  subscribe(behavior: Behavior): void {
+    Object.entries(behavior).forEach(([eventName, listener]) => {
+      this.on(eventName, listener)
+    })
+  }
+
+  unsubscribe(behavior: Behavior): void {
+    Object.entries(behavior).forEach(([eventName, listener]) => {
+      this.off(eventName, listener)
+    })
   }
 }
 

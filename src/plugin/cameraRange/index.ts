@@ -36,6 +36,6 @@ export const cameraRange = {
       unmount: () => {
         start.value = false
       }
-    }, 'ThreeUse.Plugin.CameraRange')
+    })
   }
 }
