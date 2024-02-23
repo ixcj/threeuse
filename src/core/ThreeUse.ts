@@ -1,9 +1,9 @@
-import type { CreateAppOptions } from "../core/index.d"
-import { isString, isFunction } from "@/utils/type"
+import type { CreateAppOptions } from '../core/index.d'
+import { isString, isFunction } from '@/utils/type'
 import {
   ref,
   type Ref
-} from "vue"
+} from 'vue'
 import {
   Scene,
   PerspectiveCamera,
@@ -11,9 +11,9 @@ import {
   Color,
   Vector3,
   LinearSRGBColorSpace,
-} from "three"
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
-import { debounce } from "@/utils/handle"
+} from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { debounce } from '@/utils/handle'
 
 // interface
 interface InstallFunction {
@@ -33,7 +33,7 @@ export class ThreeUse {
 
   constructor(options: CreateAppOptions = {}) {
     const {
-      clearColor = "#181818",
+      clearColor = '#181818',
       cameraPosition = [0, 0, 0],
       outputColorSpace = LinearSRGBColorSpace,
     } = options
@@ -97,7 +97,7 @@ export class ThreeUse {
       if (this.mounted) {
         this._setSize()
 
-        this.send("resize")
+        this.send('resize')
       }
     },
     16,
@@ -160,7 +160,7 @@ export class ThreeUse {
         this._controls.value.target = new Vector3(0, 0, 0)
       }
 
-      this.send("mount")
+      this.send('mount')
     }
 
     return this
@@ -172,7 +172,7 @@ export class ThreeUse {
       domElement.remove()
       this.mounted = true
 
-      this.send("unmount")
+      this.send('unmount')
     }
 
     return this
@@ -225,8 +225,8 @@ function normalizeContainer(container: Element | string): Element | null {
 
 function createRefProxy<T = any>(target: Ref<T>): T {
   return new Proxy(target, {
-    get(target) {
-      return target.value
-    }
+    get(obj: Ref<any>, prop: string | symbol) {
+      return obj.value[prop]
+    },
   }) as T
 }

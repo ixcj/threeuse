@@ -6,7 +6,7 @@ title: ThreeUse
 hero:
   name: ThreeUse
   text: 基于Vue3的Three.js实用组合工具
-  tagline: 为Three.js提供响应式操作
+  tagline: 响应式的Three.js实用工具集合
   image:
     src: /logo.png
     alt: ThreeUse
