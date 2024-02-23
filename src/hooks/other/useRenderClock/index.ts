@@ -45,7 +45,10 @@ watchEffect(() => {
   }
 })
 
-export function useRenderClock(fn: Fn, options: UseRenderClockOptions = {}): UseRenderReturnValue {
+export function useRenderClock(
+  fn: Fn,
+  options: UseRenderClockOptions = {}
+): UseRenderReturnValue {
   const {
     key = Symbol(),
     activate = true,

@@ -1,3 +1,5 @@
+const formattedDecimalMode = <const>['round', 'floor', 'ceil']
+
 /**
  * 格式化小数
  * @param {number} num - 数值
@@ -7,10 +9,10 @@
 export function formattedDecimal(
   num: number,
   decimals: number = 2,
-  mode: 'round' | 'floor' | 'ceil' = 'round'
+  mode: typeof formattedDecimalMode[number] = formattedDecimalMode[0]
 ) {
   const multiple = Math.pow(10, decimals)
-  const modeMethod = ['round', 'floor', 'ceil'].includes(mode)
+  const modeMethod = formattedDecimalMode.includes(mode)
     ? Math[mode]
     : Math.round
 

@@ -1,6 +1,10 @@
 import type { CreateAppOptions } from "../core/index.d"
 import { isString, isFunction } from "@/utils/type"
 import {
+  ref,
+  type Ref
+} from "vue"
+import {
   Scene,
   PerspectiveCamera,
   WebGLRenderer,
@@ -18,7 +22,6 @@ interface InstallFunction {
 
 // type
 export type Listener = (...args: any[]) => void
-export type Events = Record<string, Listener[]>
 export type Behavior = Record<string, Listener>
 export type Plugin = { install: InstallFunction } | InstallFunction
 
@@ -26,25 +29,18 @@ export class ThreeUse {
   // 需要初始化的私有属性
   private _renderer: WebGLRenderer
   private _scene: Scene
-  private _camera: PerspectiveCamera
+  private _camera: Ref<PerspectiveCamera>
 
   constructor(options: CreateAppOptions = {}) {
     const {
       clearColor = "#181818",
-
       cameraPosition = [0, 0, 0],
-
-      fov = 35,
-      aspect = 16 / 9,
-      near = 0.5,
-      far = 10000,
-
       outputColorSpace = LinearSRGBColorSpace,
     } = options
 
     this._scene = new Scene()
-    this._camera = new PerspectiveCamera(fov, aspect, near, far)
-    this._camera.position.set(...cameraPosition)
+    this._camera = ref<PerspectiveCamera>(new PerspectiveCamera(35, 16 / 9, 0.1, 10000))
+    this._camera.value.position.set(...cameraPosition)
 
     this._renderer = new WebGLRenderer({
       alpha: true,
@@ -57,11 +53,11 @@ export class ThreeUse {
   }
 
   // 私有属性
-  private _controls: unknown
   private _container: Element
-  private _events: Events = {}
+  private _controls: Ref<any> = ref(null)
+  private _events: Record<string, Listener[]> = {}
   private _resizeObserver = new ResizeObserver(() => this._resize())
-  private _size = { width: 0, height: 0 }
+  private _size = { width: 0, height: 0, devicePixelRatio: 1 }
 
   // 公共属性
   public mounted: boolean = false
@@ -78,21 +74,21 @@ export class ThreeUse {
   private _setSize(): void {
     this._size.width = this._container?.clientWidth || 0
     this._size.height = this._container?.clientHeight || 0
-  }
+    this._size.devicePixelRatio = devicePixelRatio || 1
 
-  private _setCamera(): void {
-    this._camera.aspect = this._size.width / this._size.height
-    this._camera.updateProjectionMatrix()
+    this._camera.value.aspect = this._size.width / this._size.height
+    this._camera.value.updateProjectionMatrix()
     this._renderer.setSize(this._size.width, this._size.height)
+    this._renderer.setPixelRatio(this._size.devicePixelRatio)
   }
 
   private _render(): void {
     requestAnimationFrame(this._render.bind(this))
 
     if (this.enableCustomRender && isFunction(this._customRender)) {
-      this._customRender(this._scene, this._camera, this)
+      this._customRender(this._scene, this._camera.value, this)
     } else {
-      this._renderer.render(this._scene, this._camera)
+      this._renderer.render(this._scene, this._camera.value)
     }
   }
 
@@ -100,8 +96,6 @@ export class ThreeUse {
     () => {
       if (this.mounted) {
         this._setSize()
-        this._setCamera()
-        this._renderer.setPixelRatio(devicePixelRatio || 1)
 
         this.send("resize")
       }
@@ -124,7 +118,7 @@ export class ThreeUse {
   }
 
   getControls<T = any>(): T {
-    return this._controls as T
+    return createRefProxy<T>(this._controls)
   }
 
   getScene(): Scene {
@@ -132,13 +126,11 @@ export class ThreeUse {
   }
 
   getCamera(): PerspectiveCamera {
-    return this._camera
+    return createRefProxy<PerspectiveCamera>(this._camera)
   }
 
-  setControls(controls: unknown): this {
-    this._controls = controls
-
-    return this
+  setControls<T>(controls: T): void {
+    this._controls.value = controls
   }
 
   use(plugin: Plugin, ...options: any[]): this {
@@ -157,15 +149,15 @@ export class ThreeUse {
     if (container) {
       this._container = container
       this._resizeObserver.observe(this._container)
-      container.appendChild(this.getDom())
+      container.appendChild(this._renderer.domElement)
       this.mounted = true
 
       this._resize()
       this._render()
 
-      if (!this._controls) {
-        this.setControls(new OrbitControls(this._camera, this.getDom()))
-        this.getControls<OrbitControls>().target = new Vector3(0, 0, 0)
+      if (!this._controls.value) {
+        this.setControls(new OrbitControls(this._camera.value, this._renderer.domElement))
+        this._controls.value.target = new Vector3(0, 0, 0)
       }
 
       this.send("mount")
@@ -175,7 +167,7 @@ export class ThreeUse {
   }
 
   unmount(): this {
-    const domElement = this.getDom()
+    const domElement = this._renderer.domElement
     if (domElement) {
       domElement.remove()
       this.mounted = true
@@ -229,4 +221,12 @@ function normalizeContainer(container: Element | string): Element | null {
   }
 
   return container
+}
+
+function createRefProxy<T = any>(target: Ref<T>): T {
+  return new Proxy(target, {
+    get(target) {
+      return target.value
+    }
+  }) as T
 }
