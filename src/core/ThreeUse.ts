@@ -1,19 +1,24 @@
 import type { CreateAppOptions } from '../core/index.d'
-import { isString, isFunction } from '@/utils/type'
+import { isFunction } from '@/utils/type'
 import {
+  type Ref,
   ref,
-  type Ref
 } from 'vue'
 import {
   Scene,
   PerspectiveCamera,
+  OrthographicCamera,
   WebGLRenderer,
   Color,
   Vector3,
   LinearSRGBColorSpace,
 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { debounce } from '@/utils/handle'
+import {
+  debounce,
+  normalizeContainer,
+  createRefProxy,
+} from '@/utils/handle'
 
 // interface
 interface InstallFunction {
@@ -24,36 +29,17 @@ interface InstallFunction {
 export type Listener = (...args: any[]) => void
 export type Behavior = Record<string, Listener>
 export type Plugin = { install: InstallFunction } | InstallFunction
+export type Camera = PerspectiveCamera | OrthographicCamera
 
 export class ThreeUse {
   // 需要初始化的私有属性
   private _renderer: WebGLRenderer
   private _scene: Scene
-  private _camera: Ref<PerspectiveCamera>
-
-  constructor(options: CreateAppOptions = {}) {
-    const {
-      clearColor = '#181818',
-      cameraPosition = [0, 0, 0],
-      outputColorSpace = LinearSRGBColorSpace,
-    } = options
-
-    this._scene = new Scene()
-    this._camera = ref<PerspectiveCamera>(new PerspectiveCamera(35, 16 / 9, 0.1, 10000))
-    this._camera.value.position.set(...cameraPosition)
-
-    this._renderer = new WebGLRenderer({
-      alpha: true,
-      antialias: true,
-      failIfMajorPerformanceCaveat: true,
-    })
-    this._renderer.shadowMap.enabled = true
-    this._renderer.outputColorSpace = outputColorSpace
-    this._renderer.setClearColor(new Color(clearColor))
-  }
+  private _domElement: HTMLCanvasElement
+  private _camera: Ref<Camera>
 
   // 私有属性
-  private _container: Element
+  private _container: Ref<Element>
   private _controls: Ref<any> = ref(null)
   private _events: Record<string, Listener[]> = {}
   private _resizeObserver = new ResizeObserver(() => this._resize())
@@ -64,20 +50,48 @@ export class ThreeUse {
   public enableCustomRender: boolean = false
   public globalProperties: Record<string | symbol, any> = {}
 
+  constructor(options: CreateAppOptions = {}) {
+    const {
+      clearColor = '#181818',
+      cameraPosition = [0, 0, 0],
+      outputColorSpace = LinearSRGBColorSpace,
+    } = options
+
+    this._renderer = new WebGLRenderer({
+      alpha: true,
+      antialias: true,
+      failIfMajorPerformanceCaveat: true,
+    })
+    this._scene = new Scene()
+    
+    this._domElement = this._renderer.domElement
+    
+    this._renderer.shadowMap.enabled = true
+    this._renderer.outputColorSpace = outputColorSpace
+    clearColor && this._renderer.setClearColor(new Color(clearColor))
+
+    this._camera = ref<PerspectiveCamera>(new PerspectiveCamera(35, 16 / 9, 0.1, 10000))
+    this._camera.value.position.set(...cameraPosition)
+  }
+
   // 私有方法
   private _customRender:
     | null
     | undefined
-    | ((scene: Scene, camera: PerspectiveCamera, app: ThreeUse) => void) =
+    | ((scene: Scene, camera: Camera, app: ThreeUse) => void) =
     undefined
 
   private _setSize(): void {
-    this._size.width = this._container?.clientWidth || 0
-    this._size.height = this._container?.clientHeight || 0
+    this._size.width = this._container.value?.clientWidth || 0
+    this._size.height = this._container.value?.clientHeight || 0
     this._size.devicePixelRatio = devicePixelRatio || 1
 
-    this._camera.value.aspect = this._size.width / this._size.height
+    const aspect = this._size.width / this._size.height
+    if (this._camera.value instanceof PerspectiveCamera) {
+      this._camera.value.aspect = aspect
+    }
     this._camera.value.updateProjectionMatrix()
+
     this._renderer.setSize(this._size.width, this._size.height)
     this._renderer.setPixelRatio(this._size.devicePixelRatio)
   }
@@ -110,27 +124,35 @@ export class ThreeUse {
   }
 
   getDom(): HTMLCanvasElement {
-    return this._renderer.domElement
-  }
-
-  getContainer(): Element {
-    return this._container
-  }
-
-  getControls<T = any>(): T {
-    return createRefProxy<T>(this._controls)
+    return this._domElement
   }
 
   getScene(): Scene {
     return this._scene
   }
 
-  getCamera(): PerspectiveCamera {
-    return createRefProxy<PerspectiveCamera>(this._camera)
+  getContainer(): Element {
+    return createRefProxy(this._container)
   }
 
-  setControls<T>(controls: T): void {
-    this._controls.value = controls
+  getControls<T = any>(): T {
+    return createRefProxy<T>(this._controls)
+  }
+
+  getCamera(): Camera {
+    return createRefProxy<Camera>(this._camera)
+  }
+
+  setControls<T>(controls: T): T {
+    this._controls = ref(controls)
+
+    return this.getControls()
+  }
+
+  setCamera(camera: Camera): Camera {
+    this._camera = ref(camera)
+
+    return this.getCamera()
   }
 
   use(plugin: Plugin, ...options: any[]): this {
@@ -147,16 +169,16 @@ export class ThreeUse {
     const container = normalizeContainer(rootContainer)
 
     if (container) {
-      this._container = container
-      this._resizeObserver.observe(this._container)
-      container.appendChild(this._renderer.domElement)
+      this._container = ref(container)
+      this._resizeObserver.observe(this._container.value)
+      container.appendChild(this._domElement)
       this.mounted = true
 
       this._resize()
       this._render()
 
       if (!this._controls.value) {
-        this.setControls(new OrbitControls(this._camera.value, this._renderer.domElement))
+        this.setControls(new OrbitControls(this._camera.value, this._domElement))
         this._controls.value.target = new Vector3(0, 0, 0)
       }
 
@@ -167,10 +189,10 @@ export class ThreeUse {
   }
 
   unmount(): this {
-    const domElement = this._renderer.domElement
+    const domElement = this._domElement
     if (domElement) {
       domElement.remove()
-      this.mounted = true
+      this.mounted = false
 
       this.send('unmount')
     }
@@ -213,20 +235,4 @@ export class ThreeUse {
       this.off(eventName, listener)
     })
   }
-}
-
-function normalizeContainer(container: Element | string): Element | null {
-  if (isString(container)) {
-    return document.querySelector(container)
-  }
-
-  return container
-}
-
-function createRefProxy<T = any>(target: Ref<T>): T {
-  return new Proxy(target, {
-    get(obj: Ref<any>, prop: string | symbol) {
-      return obj.value[prop]
-    },
-  }) as T
 }

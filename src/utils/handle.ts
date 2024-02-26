@@ -1,3 +1,6 @@
+import type { Ref } from 'vue'
+import { isString } from '@/utils/type'
+
 /**
  * 防抖函数
  * @param func 执行函数
@@ -24,3 +27,30 @@ export function debounce(
     }, delay)
   }
 }
+
+/**
+ * 标准化容器
+ * @param container 容器
+ * @returns 元素
+ */
+export function normalizeContainer(container: Element | string): Element | null {
+  if (isString(container)) {
+    return document.querySelector(container)
+  }
+
+  return container
+}
+
+/**
+ * 创建Ref代理
+ * @param target 目标对象
+ * @returns 代理对象
+ */
+export function createRefProxy<T = any>(target: Ref<T>): T {
+  return new Proxy(target, {
+    get(obj: Ref<any>, prop: string | symbol) {
+      return obj.value[prop]
+    },
+  }) as T
+}
+
