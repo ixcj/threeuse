@@ -1,4 +1,3 @@
-import type { Ref } from 'vue'
 import { isString } from '@/utils/type'
 
 /**
@@ -40,17 +39,3 @@ export function normalizeContainer(container: Element | string): Element | null 
 
   return container
 }
-
-/**
- * 创建Ref代理
- * @param target 目标对象
- * @returns 代理对象
- */
-export function createRefProxy<T = any>(target: Ref<T>): T {
-  return new Proxy(target, {
-    get(obj: Ref<any>, prop: string | symbol) {
-      return obj.value[prop]
-    },
-  }) as T
-}
-
