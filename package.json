@@ -59,7 +59,6 @@
     "echarts": "^5.4.3",
     "gh-pages": "^4.0.0",
     "np": "^7.6.2",
-    "three": "^0.160.0",
     "vitepress": "latest",
     "vue": "^3.3.8",
     "vue-echarts": "^6.6.1"
@@ -68,6 +67,9 @@
     "@types/node": "^20.9.5",
     "sass": "^1.69.5",
     "unbuild": "^0.7.6"
+  },
+  "peerDependencies": {
+    "three": ">=0.160"
   },
   "pnpm": {
     "patchedDependencies": {
