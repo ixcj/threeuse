@@ -114,7 +114,7 @@ export class ThreeUse {
         this.send('resize')
       }
     },
-    16,
+    100,
     true
   )
 
@@ -131,16 +131,16 @@ export class ThreeUse {
     return this._scene
   }
 
-  getContainer(): Element {
-    return createRefProxy(this._container)
+  getContainer(proxy: boolean = false): Element {
+    return proxy ? createRefProxy(this._container) : this._container.value
   }
 
-  getControls<T = any>(): T {
-    return createRefProxy<T>(this._controls)
+  getControls<T = any>(proxy: boolean = false): T {
+    return proxy ? createRefProxy<T>(this._controls) : this._controls.value
   }
 
-  getCamera(): Camera {
-    return createRefProxy<Camera>(this._camera)
+  getCamera(proxy: boolean = false): Camera {
+    return proxy ? createRefProxy<Camera>(this._camera) : this._camera.value
   }
 
   setControls<T>(controls: T): T {

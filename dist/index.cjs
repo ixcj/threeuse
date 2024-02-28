@@ -3,9 +3,9 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 const index = require('./chunks/index.cjs');
+const vue = require('vue');
 const three = require('three');
 const OrbitControls_js = require('three/examples/jsm/controls/OrbitControls.js');
-const vue = require('vue');
 const Sky_js = require('three/examples/jsm/objects/Sky.js');
 const TWEEN = require('@tweenjs/tween.js');
 
@@ -28,15 +28,26 @@ function debounce(func, delay, immediate = false) {
     }, delay);
   };
 }
+function normalizeContainer(container) {
+  if (index.isString(container)) {
+    return document.querySelector(container);
+  }
+  return container;
+}
+function createRefProxy(target) {
+  return new Proxy(target, {
+    get(obj, prop) {
+      return obj.value[prop];
+    }
+  });
+}
 
 class ThreeUse {
   constructor(options = {}) {
+    this._controls = vue.ref(null);
+    this._events = {};
     this._resizeObserver = new ResizeObserver(() => this._resize());
-    this._subscribe = /* @__PURE__ */ new Map();
-    this._size = {
-      width: 0,
-      height: 0
-    };
+    this._size = { width: 0, height: 0, devicePixelRatio: 1 };
     this.mounted = false;
     this.enableCustomRender = false;
     this.globalProperties = {};
@@ -45,9 +56,7 @@ class ThreeUse {
       () => {
         if (this.mounted) {
           this._setSize();
-          this._setCamera();
-          this._renderer.setPixelRatio(devicePixelRatio || 1);
-          this._notify("resize");
+          this.send("resize");
         }
       },
       16,
@@ -56,74 +65,66 @@ class ThreeUse {
     const {
       clearColor = "#181818",
       cameraPosition = [0, 0, 0],
-      fov = 35,
-      aspect = 16 / 9,
-      near = 0.5,
-      far = 1e4,
       outputColorSpace = three.LinearSRGBColorSpace
     } = options;
-    this._scene = new three.Scene();
-    this._camera = new three.PerspectiveCamera(fov, aspect, near, far);
-    this._camera.position.set(...cameraPosition);
     this._renderer = new three.WebGLRenderer({
       alpha: true,
       antialias: true,
       failIfMajorPerformanceCaveat: true
     });
+    this._scene = new three.Scene();
+    this._domElement = this._renderer.domElement;
     this._renderer.shadowMap.enabled = true;
     this._renderer.outputColorSpace = outputColorSpace;
-    this._renderer.setClearColor(new three.Color(clearColor));
+    clearColor && this._renderer.setClearColor(new three.Color(clearColor));
+    this._camera = vue.ref(new three.PerspectiveCamera(35, 16 / 9, 0.1, 1e4));
+    this._camera.value.position.set(...cameraPosition);
   }
   _setSize() {
-    this._size.width = this._container?.clientWidth || 0;
-    this._size.height = this._container?.clientHeight || 0;
-  }
-  _setCamera() {
-    this._camera.aspect = this._size.width / this._size.height;
-    this._camera.updateProjectionMatrix();
+    this._size.width = this._container.value?.clientWidth || 0;
+    this._size.height = this._container.value?.clientHeight || 0;
+    this._size.devicePixelRatio = devicePixelRatio || 1;
+    const aspect = this._size.width / this._size.height;
+    if (this._camera.value instanceof three.PerspectiveCamera) {
+      this._camera.value.aspect = aspect;
+    }
+    this._camera.value.updateProjectionMatrix();
     this._renderer.setSize(this._size.width, this._size.height);
+    this._renderer.setPixelRatio(this._size.devicePixelRatio);
   }
   _render() {
     requestAnimationFrame(this._render.bind(this));
     if (this.enableCustomRender && index.isFunction(this._customRender)) {
-      this._customRender(this._scene, this._camera, this);
+      this._customRender(this._scene, this._camera.value, this);
     } else {
-      this._renderer.render(this._scene, this._camera);
+      this._renderer.render(this._scene, this._camera.value);
     }
-  }
-  _notify(notifyType, data) {
-    this._subscribe.forEach((behavior) => {
-      const fn = behavior[notifyType];
-      if (index.isFunction(fn)) {
-        try {
-          data ? fn(data) : fn();
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    });
   }
   getRenderer() {
     return this._renderer;
   }
   getDom() {
-    return this._renderer.domElement;
-  }
-  getContainer() {
-    return this._container;
-  }
-  getControls() {
-    return this._controls;
+    return this._domElement;
   }
   getScene() {
     return this._scene;
   }
+  getContainer() {
+    return createRefProxy(this._container);
+  }
+  getControls() {
+    return createRefProxy(this._controls);
+  }
   getCamera() {
-    return this._camera;
+    return createRefProxy(this._camera);
   }
   setControls(controls) {
-    this._controls = controls;
-    return this;
+    this._controls = vue.ref(controls);
+    return this.getControls();
+  }
+  setCamera(camera) {
+    this._camera = vue.ref(camera);
+    return this.getCamera();
   }
   use(plugin, ...options) {
     if (index.isFunction(plugin)) {
@@ -136,42 +137,59 @@ class ThreeUse {
   mount(rootContainer) {
     const container = normalizeContainer(rootContainer);
     if (container) {
-      this._container = container;
-      this._resizeObserver.observe(this._container);
-      container.appendChild(this.getDom());
+      this._container = vue.ref(container);
+      this._resizeObserver.observe(this._container.value);
+      container.appendChild(this._domElement);
       this.mounted = true;
       this._resize();
       this._render();
-      if (!this._controls) {
-        this.setControls(new OrbitControls_js.OrbitControls(this._camera, this.getDom()));
-        this.getControls().target = new three.Vector3(0, 0, 0);
+      if (!this._controls.value) {
+        this.setControls(new OrbitControls_js.OrbitControls(this._camera.value, this._domElement));
+        this._controls.value.target = new three.Vector3(0, 0, 0);
       }
-      this._notify("mount");
+      this.send("mount");
     }
     return this;
   }
   unmount() {
-    const domElement = this.getDom();
+    const domElement = this._domElement;
     if (domElement) {
       domElement.remove();
-      this.mounted = true;
-      this._notify("unmount");
+      this.mounted = false;
+      this.send("unmount");
     }
     return this;
   }
-  subscribe(behavior, key = Symbol()) {
-    this._subscribe.set(key, behavior);
-    return key;
+  on(eventName, listener) {
+    if (!this._events[eventName]) {
+      this._events[eventName] = [];
+    }
+    this._events[eventName].push(listener);
   }
-  unSubscribe(key) {
-    this._subscribe.delete(key);
+  off(eventName, listenerToRemove) {
+    if (!this._events[eventName])
+      return;
+    this._events[eventName] = this._events[eventName].filter(
+      (listener) => listener !== listenerToRemove
+    );
   }
-}
-function normalizeContainer(container) {
-  if (index.isString(container)) {
-    return document.querySelector(container);
+  send(eventName, ...args) {
+    if (this._events[eventName]) {
+      this._events[eventName].forEach((listener) => {
+        listener(...args);
+      });
+    }
   }
-  return container;
+  subscribe(behavior) {
+    Object.entries(behavior).forEach(([eventName, listener]) => {
+      this.on(eventName, listener);
+    });
+  }
+  unsubscribe(behavior) {
+    Object.entries(behavior).forEach(([eventName, listener]) => {
+      this.off(eventName, listener);
+    });
+  }
 }
 
 function createApp(options = {}) {
@@ -184,9 +202,10 @@ function createApp(options = {}) {
   return proxyApp;
 }
 
-function formattedDecimal(num, decimals = 2, mode = "round") {
+const formattedDecimalMode = ["round", "floor", "ceil"];
+function formattedDecimal(num, decimals = 2, mode = formattedDecimalMode[0]) {
   const multiple = Math.pow(10, decimals);
-  const modeMethod = ["round", "floor", "ceil"].includes(mode) ? Math[mode] : Math.round;
+  const modeMethod = formattedDecimalMode.includes(mode) ? Math[mode] : Math.round;
   return modeMethod(num * multiple) / multiple;
 }
 

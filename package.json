@@ -1,6 +1,6 @@
 {
   "name": "threeuse",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "基于Vue3的Three.js实用组合工具",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -39,10 +39,10 @@
   "author": "ixcj<https://github.com/ixcj>",
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/ixcj/threeuse"
+    "url": "https://github.com/ixcj/threeuse"
   },
   "bugs": {
-    "url": "https://gitee.com/ixcj/threeuse/issues",
+    "url": "https://github.com/ixcj/threeuse/issues",
     "email": "i@xcj.im"
   },
   "homepage": "http://threeuse.com",

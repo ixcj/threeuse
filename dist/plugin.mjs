@@ -26,7 +26,7 @@ const stats = {
           statsDom.remove();
           start.value = false;
         }
-      }, "ThreeUse.Plugin.Stats");
+      });
     } else {
       mount(document.body);
     }
@@ -63,7 +63,7 @@ const cameraRange = {
       unmount: () => {
         start.value = false;
       }
-    }, "ThreeUse.Plugin.CameraRange");
+    });
   }
 };
 

@@ -1,5 +1,5 @@
-import { T as ThreeUse } from './ThreeUse-e81179dd.js';
-export { T as default } from './ThreeUse-e81179dd.js';
+import { T as ThreeUse } from './ThreeUse-4f771936.js';
+export { T as default } from './ThreeUse-4f771936.js';
 import * as THREE from 'three';
 import { Ref } from 'vue';
 
@@ -20,26 +20,6 @@ interface CreateAppOptions {
    * @defaultValue [0, 0, 0]
    */
   cameraPosition?: [number, number, number]
-  /**
-   * 相机fov参数
-   * @defaultValue 35
-   */
-  fov?: number
-  /**
-   * 相机aspect参数
-   * @defaultValue 16/9
-   */
-  aspect?: number
-  /**
-   * 相机near参数
-   * @defaultValue 0.5
-   */
-  near?: number
-  /**
-   * 相机far参数
-   * @defaultValue 10000
-   */
-  far?: number
   /**
    * 色彩空间
    * @defaultValue THREE.LinearSRGBColorSpace

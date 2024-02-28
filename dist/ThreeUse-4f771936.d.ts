@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { WebGLRenderer, Scene, PerspectiveCamera } from 'three';
+import { WebGLRenderer, Scene, PerspectiveCamera, OrthographicCamera } from 'three';
 
 interface CreateAppOptions {
   /**
@@ -13,26 +13,6 @@ interface CreateAppOptions {
    */
   cameraPosition?: [number, number, number]
   /**
-   * 相机fov参数
-   * @defaultValue 35
-   */
-  fov?: number
-  /**
-   * 相机aspect参数
-   * @defaultValue 16/9
-   */
-  aspect?: number
-  /**
-   * 相机near参数
-   * @defaultValue 0.5
-   */
-  near?: number
-  /**
-   * 相机far参数
-   * @defaultValue 10000
-   */
-  far?: number
-  /**
    * 色彩空间
    * @defaultValue THREE.LinearSRGBColorSpace
    */
@@ -42,44 +22,46 @@ interface CreateAppOptions {
 interface InstallFunction {
     (app: ThreeUse, ...options: any[]): void;
 }
-type ObserverTyep = "mount" | "unmount" | "resize";
-type ObserverBehavior = {
-    [type in ObserverTyep]?: Function;
-};
+type Listener = (...args: any[]) => void;
+type Behavior = Record<string, Listener>;
 type Plugin = {
     install: InstallFunction;
 } | InstallFunction;
+type Camera = PerspectiveCamera | OrthographicCamera;
 declare class ThreeUse {
     private _renderer;
     private _scene;
+    private _domElement;
     private _camera;
-    constructor(options?: CreateAppOptions);
-    private _controls;
     private _container;
+    private _controls;
+    private _events;
     private _resizeObserver;
-    private _subscribe;
     private _size;
     mounted: boolean;
     enableCustomRender: boolean;
     globalProperties: Record<string | symbol, any>;
+    constructor(options?: CreateAppOptions);
     private _customRender;
     private _setSize;
-    private _setCamera;
     private _render;
-    private _notify;
     private _resize;
     getRenderer(): WebGLRenderer;
     getDom(): HTMLCanvasElement;
+    getScene(): Scene;
     getContainer(): Element;
     getControls<T = any>(): T;
-    getScene(): Scene;
-    getCamera(): PerspectiveCamera;
-    setControls(controls: unknown): this;
+    getCamera(): Camera;
+    setControls<T>(controls: T): T;
+    setCamera(camera: Camera): Camera;
     use(plugin: Plugin, ...options: any[]): this;
     mount(rootContainer: Element | string): this;
     unmount(): this;
-    subscribe(behavior: ObserverBehavior, key?: symbol | string): symbol | string;
-    unSubscribe(key: symbol | string): void;
+    on(eventName: string, listener: Listener): void;
+    off(eventName: string, listenerToRemove: Listener): void;
+    send(eventName: string, ...args: any[]): void;
+    subscribe(behavior: Behavior): void;
+    unsubscribe(behavior: Behavior): void;
 }
 
 export { ThreeUse as T };

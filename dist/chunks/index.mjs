@@ -57,4 +57,4 @@ function useRenderClock(fn, options = {}) {
   };
 }
 
-export { isString as a, isFunction as i, renderFunctionMap as r, useRenderClock as u };
+export { isFunction as a, isString as i, renderFunctionMap as r, useRenderClock as u };
