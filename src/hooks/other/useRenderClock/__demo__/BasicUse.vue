@@ -1,31 +1,37 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { useRenderClock } from 'threeuse'
 
 const REFRESH_COUNT = 1000
 
 const fps = ref(0)
-const refreshIntervalList: number[] = []
 
-const { start } = useRenderClock((d) => {
-  refreshIntervalList.push(d)
-  
-  const duration = refreshIntervalList.reduce((s, n) => s + n)
-  if (duration >= REFRESH_COUNT) {
-    const meanInterval = duration / refreshIntervalList.length
-    fps.value = Math.round(1000 / meanInterval)
-    refreshIntervalList.length = 0
+let ticks
+let lastTime
+
+const { start } = useRenderClock(() => {
+  ticks += 1
+
+  const currentTime = new Date().getTime()
+  const timeDifference = currentTime - lastTime
+
+  if (timeDifference >= REFRESH_COUNT) {
+    fps.value = Math.round(1000 / (timeDifference / ticks))
+    ticks = 0
+    lastTime = currentTime
   }
 }, { activate: false })
 
 function handleStart() {
   start.value = !start.value
-
-  if (!start.value) {
-    fps.value = 0
-    refreshIntervalList.length = 0
-  }
 }
+
+watchEffect(() => {
+  if (start.value) {
+    fps.value = ticks = 0
+    lastTime = new Date().getTime()
+  }
+})
 </script>
 
 <template>
