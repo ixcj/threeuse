@@ -5,6 +5,10 @@ export default defineBuildConfig({
   entries: [
     'src/index',
     {
+      input: 'src/expand/index',
+      name: 'expand',
+    },
+    {
       input: 'src/plugin/index',
       name: 'plugin',
     }

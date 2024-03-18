@@ -1,7 +1,7 @@
 ---
 
 map:
-  path: /hooks/other/render-clock/
+  path: /expand/render-clock/
 
 ---
 

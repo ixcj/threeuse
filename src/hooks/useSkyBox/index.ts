@@ -15,7 +15,7 @@ import {
   Color
 } from 'three'
 import { Sky } from 'three/examples/jsm/objects/Sky.js'
-import { useRenderClock } from '../other/useRenderClock'
+import { useRenderClock } from '@/expand/useRenderClock'
 import { isFunction } from '@/utils/type'
 import { formattedDecimal } from '@/utils/math'
 import TWEEN from '@tweenjs/tween.js'

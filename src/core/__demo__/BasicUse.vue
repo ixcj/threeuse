@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { createApp, useRenderClock } from 'threeuse'
+import { createApp } from 'threeuse'
 import { BoxGeometry, MeshBasicMaterial, Mesh, Color } from 'three'
 
 const app = createApp({ cameraPosition: [0, 0, 5] })
@@ -14,12 +14,6 @@ for(let i = 0; i < 6; i++){
 
 const cube = new Mesh(geometry, mats)
 app.getScene().add(cube)
-
-useRenderClock((d) => {
-  const rotation = d / 1000
-  cube.rotation.x += rotation
-  cube.rotation.y += rotation
-})
 
 onMounted(() => app.mount('#app-container'))
 </script>

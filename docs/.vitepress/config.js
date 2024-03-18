@@ -14,13 +14,17 @@ const Core = [
 
 const Other = [
   { text: 'useRollingData 滚动数据', link: '/hooks/other/rolling-data/' },
-  { text: 'useRenderClock 渲染时钟', link: '/hooks/other/render-clock/' },
 ]
 
 const Hooks = [
   { text: 'useRain 雨', link: '/hooks/rain/' },
   { text: 'useSkyBox 天空盒', link: '/hooks/sky-box/' },
   { text: '其他', items: Other },
+]
+
+const expand = [
+  { text: 'useLoader 加载器', link: '/expand/loader/' },
+  { text: 'useRenderClock 渲染时钟', link: '/expand/render-clock/' },
 ]
 
 const Plugins = [
@@ -32,6 +36,7 @@ const sidebar = [
   { text: '指引', items: Guide },
   { text: '核心', items: Core },
   { text: '功能', items: Hooks },
+  { text: '扩展', items: expand },
   { text: '插件', items: Plugins },
 ]
 
