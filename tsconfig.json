@@ -35,11 +35,11 @@
             "threeuse": [
                 "src/index.ts"
             ],
-            "threeuse/expand": [
-                "src/expand/index.ts"
+            "threeuse/expands": [
+                "src/expands/index.ts"
             ],
-            "threeuse/plugin": [
-                "src/plugin/index.ts"
+            "threeuse/plugins": [
+                "src/plugins/index.ts"
             ]
         },
     },

@@ -1,7 +1,7 @@
 ---
 
 map:
-  path: /expand/render-clock/
+  path: /expands/render-clock/
 
 ---
 

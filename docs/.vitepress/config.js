@@ -22,21 +22,21 @@ const Hooks = [
   { text: '其他', items: Other },
 ]
 
-const expand = [
-  { text: 'useLoader 加载器', link: '/expand/loader/' },
-  { text: 'useRenderClock 渲染时钟', link: '/expand/render-clock/' },
+const Expands = [
+  { text: 'useLoader 加载器', link: '/expands/loader/' },
+  { text: 'useRenderClock 渲染时钟', link: '/expands/render-clock/' },
 ]
 
 const Plugins = [
-  { text: 'stats 性能监测', link: '/plugin/stats/' },
-  { text: 'cameraRange 相机范围', link: '/plugin/cameraRange/' },
+  { text: 'stats 性能监测', link: '/plugins/stats/' },
+  { text: 'cameraRange 相机范围', link: '/plugins/cameraRange/' },
 ]
 
 const sidebar = [
   { text: '指引', items: Guide },
   { text: '核心', items: Core },
   { text: '功能', items: Hooks },
-  { text: '扩展', items: expand },
+  { text: '扩展', items: Expands },
   { text: '插件', items: Plugins },
 ]
 

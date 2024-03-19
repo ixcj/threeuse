@@ -4,18 +4,18 @@ import type {
 } from 'three'
 
 export declare function useLoader(
-  resource: ResourceItem | ResourceItem[],
+  resource: ResourceItem | ResourceItem[] | undefined,
   options?: UseLoaderOptions
 ): UseLoaderReturnValue
 
-export type ResoureType = 'gltfModel'
-  | 'fbxModel'
-  | 'objModel'
+export type ResoureType = 'gltf'
+  | 'fbx'
+  | 'obj'
   | 'texture'
   | 'video'
   | 'audio'
-  | 'cubeTexture'
-  | 'hdrTexture'
+  | 'cube'
+  | 'hdr'
 
 export interface ResourceItem {
   /**
@@ -44,10 +44,10 @@ export interface UseLoaderOptions {
    */
   enableDracoLoader?: boolean
   /**
-   * 资源大小。为0时，自动获取
-   * @defaultValue 0
+   * draco的路径
+   * @defaultValue https://cdn.jsdelivr.net/npm/draco-web-decoder@1.0.0/dist/index.min.js
    */
-  contentLength?: number
+  dracoDecoderPath?: string
   /**
    * 自动获取资源大小的模式。 fetch: 使用额外的fetch请求获取资源大小。file: 加载时获取资源大小，不发送额外请求
    * @defaultValue 'fetch'
@@ -57,9 +57,13 @@ export interface UseLoaderOptions {
 
 export interface UseLoaderReturnValue {
   /**
+   * 资源Map
+   */
+  resourceMap: Map<string, ReturnResourceItem>
+  /**
    * 资源列表
    */
-  resourceList: ReturnResourceItem[]
+  resourceList: readonly Ref<ReturnResourceItem[]>
   /**
    * 是否加载
    */
@@ -69,13 +73,17 @@ export interface UseLoaderReturnValue {
    */
   loadProgress: LoadingProgress
   /**
-   * 已经加载完成的数量
-   */
-  quantityCompleted: Ref<number>
-  /**
    * 加载资源
    */
-  onLoad: (resource: string | string[]) => void
+  load: (resource: string | string[]) => Promise
+  /**
+   * 添加资源
+   */
+  add: (resource: ResourceItem | ResourceItem[]) => void
+  /**
+   * 移除资源
+   */
+  remove: (names: string | string[]) => void
   /**
    * 获取资源是否加载完成
    */
@@ -83,7 +91,8 @@ export interface UseLoaderReturnValue {
   /**
    * 获取资源
    */
-  get: <T = any>(name: string) => T
+  get(name: string): ReturnResourceItem | undefined
+  get(names: string[]): ReturnResourceItem[] | undefined
 }
 
 export interface ReturnResourceItem {
@@ -96,9 +105,9 @@ export interface ReturnResourceItem {
    */
   type: ResoureType
   /**
-   * 资源路径
+   * 资源
    */
-  path: string
+  resource: any
   /**
    * 是否加载完成
    * @defaultValue false

@@ -1,7 +1,7 @@
 ---
 
 map:
-  path: /plugin/stats/
+  path: /plugins/stats/
 
 ---
 

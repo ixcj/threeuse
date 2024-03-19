@@ -1,7 +1,7 @@
 ---
 
 map:
-  path: /expand/loader/
+  path: /expands/loader/
 
 ---
 
@@ -11,7 +11,7 @@ map:
 
 ## 示例
 
-<!-- <demo src="./__demo__/BasicUse.vue" title="基本使用" desc="创建一个带有时间控制的天空盒"></demo> -->
+<demo src="./__demo__/BasicUse.vue" title="基本使用" desc="使用加载器加载资源"></demo>
 
 ## 类型
 

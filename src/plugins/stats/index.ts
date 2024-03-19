@@ -1,6 +1,6 @@
 import type ThreeUse from '@/index'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
-import { useRenderClock } from '@/expand/useRenderClock'
+import { useRenderClock } from '@/expands/useRenderClock'
 
 export const stats = {
   install: (app: ThreeUse, options: [boolean?, boolean?]) => {

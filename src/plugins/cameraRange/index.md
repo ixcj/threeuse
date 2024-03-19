@@ -1,7 +1,7 @@
 ---
 
 map:
-  path: /plugin/cameraRange/
+  path: /plugins/cameraRange/
 
 ---
 

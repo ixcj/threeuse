@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { createApp } from 'threeuse'
-import { cameraRange, type CameraRange } from 'threeuse/plugin'
+import { cameraRange, type CameraRange } from 'threeuse/plugins'
 import {
   BoxGeometry,
   MeshBasicMaterial,

@@ -1,7 +1,7 @@
 import type { UseRollingDataOptions, UseRollingDataReturnValue } from './index.d'
 import { ref, computed, watch, watchEffect } from 'vue'
 import { formattedDecimal } from '@/utils/math'
-import { useRenderClock } from '@/expand/useRenderClock'
+import { useRenderClock } from '@/expands/useRenderClock'
 
 export function useRollingData<T = any>(
   data: Array<T>,

@@ -1,5 +1,5 @@
 import type ThreeUse from '@/index'
-import { useRenderClock } from '@/expand/useRenderClock'
+import { useRenderClock } from '@/expands/useRenderClock'
 
 export type RangeItem = { min: number, max: number };
 export interface CameraRange {

@@ -109,7 +109,7 @@ export class ThreeUse {
         this.send('resize')
       }
     },
-    100,
+    33,
     true
   )
 

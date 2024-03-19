@@ -3,7 +3,7 @@ import { onMounted } from 'vue'
 import { createApp } from 'threeuse'
 import { BoxGeometry, MeshBasicMaterial, Mesh, Color } from 'three'
 
-const app = createApp({ cameraPosition: [0, 0, 5] })
+const app = createApp({ cameraPosition: [3, 3, 3] })
 
 const geometry = new BoxGeometry(1, 1, 1)
 const mats = []

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
-import { useRenderClock } from 'threeuse/expand'
+import { useRenderClock } from 'threeuse/expands'
 
 const REFRESH_COUNT = 1000
 
