@@ -3,7 +3,7 @@ import { onMounted } from 'vue'
 import { createApp, useSkyBox } from 'threeuse'
 import { useLoader } from 'threeuse/expands'
 import { cubeEnvMap } from 'threeuse/plugins'
-import { AmbientLight, Mesh } from 'three'
+import { AmbientLight } from 'three'
 
 const app = createApp({ cameraPosition: [5, 5, 5] }).use(cubeEnvMap)
 const scene = app.getScene()
@@ -31,29 +31,6 @@ async function load() {
   scene.add(fox.scene)
 }
 
-function reload() {
-  if (loading.value) return
-
-  const foxModel = scene.getObjectByName('fox') as Mesh
-  if (foxModel) {
-    foxModel.geometry.dispose()
-    Array.isArray(foxModel.material)
-      ? foxModel.material.forEach(item => item.dispose())
-      : foxModel.material.dispose()
-
-    scene.remove(foxModel)
-  }
-
-  loader.remove('fox')
-  loader.add({
-    name: 'fox',
-    type: 'gltf',
-    path: new URL('@/assets/model/fox.glb', import.meta.url).href
-  })
-  
-  load()
-}
-
 onMounted(async () => {
   app.mount('#app-container')
 })
@@ -65,7 +42,6 @@ onMounted(async () => {
   </div>
   <div class="btn-box" style="margin-top: 5px;">
     <button @click="load">加载资源</button>
-    <button @click="reload">重新加载</button>
   </div>
 </template>
 
