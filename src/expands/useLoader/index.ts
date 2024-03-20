@@ -1,15 +1,19 @@
 import {
   ResourceItem,
-  ResoureType,
   ReturnResourceItem,
   UseLoaderOptions,
   UseLoaderReturnValue,
 } from './index.d'
-import { ref, reactive, computed, watchEffect } from 'vue'
+import {
+  type Ref,
+  ref,
+  reactive,
+  computed,
+  watchEffect
+} from 'vue'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
 
-const isLoading = ref(false)
 const resourceMap = reactive(new Map<string, ReturnResourceItem>())
 const resourceList = computed(() => Array.from(resourceMap.values()))
 const loadProgress = reactive({})
@@ -23,15 +27,11 @@ watchEffect(() => {
   types.forEach((type) => {
     if (!loaders.has(type)) {
       switch (type) {
-        case 'fbx':
-          break
         case 'obj':
           break
+        case 'fbx':
+          break
         case 'texture':
-          break
-        case 'video':
-          break
-        case 'audio':
           break
         case 'cube':
           break
@@ -44,35 +44,65 @@ watchEffect(() => {
 
 const loadItem = async (name: string, enableDracoLoader: boolean = false) => {
   const resourceItem = resourceMap.get(name)
-  if (!resourceItem?.isLoad) {
-    console.log(`加载资源${name}`)
+
+  if (!resourceItem) {
+    console.error(`资源加载失败，${name} 不存在`)
+    return
+  }
+
+  if (resourceItem.isLoad) {
+    return resourceItem
+  } else {
+    const { type, path } = resourceItem
+
+    const gltfDraco = type === 'gltf' && enableDracoLoader
+    const loader = gltfDraco
+      ? loaders.get('gltfDraco')
+      : loaders.get(type)
+
+    return new Promise((resolve, reject) => {
+      loader.load(
+        path,
+        (file: any) => {
+          file.scene.name = name
+          resourceItem.resource = file
+          resolve(file)
+        }
+      )
+    })
   }
 }
 
-const addItem = (name: string, type: ResoureType) => {
+const addItem = (resource: ResourceItem) => {
+  const { name, type, path } = resource
   if (has(name)) {
-    console.error(`资源添加失败，${name}已存在`)
+    console.warn(`资源 ${name} 已存在，请勿重复添加`)
     return
   }
 
   resourceMap.set(name, {
     name,
     type,
+    path,
     resource: undefined,
     isLoad: false,
     contentLength: 0,
   })
 }
 
-const _load = (names: string | string[], options: UseLoaderOptions) => {
-  if (!names || names?.length) return
+const _load = (
+  names: string | string[],
+  loading: Ref<boolean>,
+  options: UseLoaderOptions,
+) => {
+  if (!names) return
 
   const {
     enableDracoLoader = false,
     // getContentLengthMode = 'fetch',
   } = options
 
-  isLoading.value = true
+  loading.value = true
 
   const taskList: Promise<any>[] = []
 
@@ -86,14 +116,14 @@ const _load = (names: string | string[], options: UseLoaderOptions) => {
 
   return new Promise((resolve, reject) => {
     Promise.all(taskList)
-      .then(() => {
-        resolve(resourceList.value)
+      .then((res) => {
+        resolve(res)
       })
       .catch((err) => {
         reject(err)
       })
       .finally(() => {
-        isLoading.value = false
+        loading.value = false
       })
   })
 }
@@ -102,13 +132,9 @@ const add = (resource: ResourceItem | ResourceItem[]) => {
   if (!resource) return
 
   if (Array.isArray(resource)) {
-    resource.forEach((item) => {
-      const { name, type } = item
-      addItem(name, type)
-    })
+    resource.forEach((item) => addItem(item))
   } else {
-    const { name, type } = resource
-    addItem(name, type)
+    addItem(resource)
   }
 }
 
@@ -142,7 +168,7 @@ function get(names: string | string[]): ReturnResourceItem | ReturnResourceItem[
 function setDracoLoader(path: string) {
   const dracoLoader = new DRACOLoader()
   dracoLoader.setDecoderPath(path)
-  loaders.get('gltfDraco')?.setDRACOLoader(dracoLoader)
+  loaders.get('gltfDraco').setDRACOLoader(dracoLoader)
 }
 
 export function useLoader(
@@ -155,28 +181,39 @@ export function useLoader(
     dracoDecoderPath = 'https://cdn.jsdelivr.net/npm/draco-web-decoder@1.0.0/dist/index.min.js'
   } = options
 
-  enableDracoLoader && setDracoLoader(dracoDecoderPath)
+  const loading = ref(false)
+  const loadQuantity = ref(0)
 
+  enableDracoLoader && setDracoLoader(dracoDecoderPath)
   resource && add(resource)
 
-  const load = (names: string | string[]) => _load(names, options)
+  const load = (names: string | string[]) => _load(names, loading, options)
 
   if (resource && loadImmediately) {
+    let loadNmaes
     if (loadImmediately === 'all') {
-      const loadNmaes = Array.isArray(resource) ? resource.map(item => item.name) : resource.name
-      load(loadNmaes)
+      loadNmaes = Array.isArray(resource)
+        ? resource.map(item => item.name)
+        : resource.name
+    } else {
+      loadNmaes = loadImmediately
     }
+
+    load(loadNmaes)
   }
 
   return {
-    resourceMap,
-    resourceList,
-    isLoading,
-    loadProgress,
-    load,
-    add,
-    remove,
-    has,
-    get,
+    loading,
+    loadQuantity,
+    loader: {
+      resourceMap,
+      resourceList,
+      loadProgress,
+      load,
+      add,
+      remove,
+      has,
+      get,
+    }
   }
 }

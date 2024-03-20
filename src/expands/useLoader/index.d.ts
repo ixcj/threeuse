@@ -9,11 +9,9 @@ export declare function useLoader(
 ): UseLoaderReturnValue
 
 export type ResoureType = 'gltf'
-  | 'fbx'
   | 'obj'
+  | 'fbx'
   | 'texture'
-  | 'video'
-  | 'audio'
   | 'cube'
   | 'hdr'
 
@@ -57,6 +55,21 @@ export interface UseLoaderOptions {
 
 export interface UseLoaderReturnValue {
   /**
+   * 是否加载
+   */
+  loading: Ref<boolean>
+  /**
+   * 加载数量
+   */
+  loadQuantity: Ref<number>
+  /**
+   * 加载器
+   */
+  loader: Loader
+}
+
+export interface Loader {
+  /**
    * 资源Map
    */
   resourceMap: Map<string, ReturnResourceItem>
@@ -64,10 +77,6 @@ export interface UseLoaderReturnValue {
    * 资源列表
    */
   resourceList: readonly Ref<ReturnResourceItem[]>
-  /**
-   * 是否加载
-   */
-  isLoading: Ref<boolean>
   /**
    * 加载进度
    */
@@ -104,6 +113,10 @@ export interface ReturnResourceItem {
    * 资源类型
    */
   type: ResoureType
+  /**
+   * 资源路径
+   */
+  path: string
   /**
    * 资源
    */
