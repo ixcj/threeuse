@@ -11,8 +11,8 @@ import {
   computed,
   watchEffect
 } from 'vue'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 
 const resourceMap = reactive(new Map<string, ReturnResourceItem>())
 const resourceList = computed(() => Array.from(resourceMap.values()))
