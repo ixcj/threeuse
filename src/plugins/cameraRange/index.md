@@ -1,7 +1,7 @@
 ---
 
 map:
-  path: /plugin/cameraRange/
+  path: /plugins/cameraRange/
 
 ---
 
@@ -14,7 +14,7 @@ map:
 <demo src="./__demo__/BasicUse.vue" title="基本使用" desc="限制相机位置范围"></demo>
 
 ```js
-import { createApp } from 'threeuse'
+import { createThreeUseApp } from 'threeuse'
 import { cameraRange } from 'threeuse/plugin'
 const app = createApp()
 app.use(cameraRange, range)

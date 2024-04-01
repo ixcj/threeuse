@@ -11,7 +11,7 @@ export declare function useRender(
 export interface UseRenderClockOptions {
   /**
    * key
-   * @defaultValue Symbol()
+   * @defaultValue symbol
    */
   key?: symbol | string,
   /**

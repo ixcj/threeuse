@@ -17,7 +17,7 @@ const stats = {
     }, { activate: false });
     if (followContainer) {
       statsDom.style.setProperty("position", "absolute");
-      statsDom.style.setProperty("z-index", "9");
+      statsDom.style.setProperty("z-index", "9999");
       app.subscribe({
         mount: () => {
           mount(app.getContainer());
@@ -26,7 +26,7 @@ const stats = {
           statsDom.remove();
           start.value = false;
         }
-      }, "ThreeUse.Plugin.Stats");
+      });
     } else {
       mount(document.body);
     }
@@ -63,7 +63,7 @@ const cameraRange = {
       unmount: () => {
         start.value = false;
       }
-    }, "ThreeUse.Plugin.CameraRange");
+    });
   }
 };
 

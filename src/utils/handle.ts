@@ -1,3 +1,5 @@
+import { isString } from '@/utils/type'
+
 /**
  * 防抖函数
  * @param func 执行函数
@@ -23,4 +25,17 @@ export function debounce(
       func.apply(that, args)
     }, delay)
   }
+}
+
+/**
+ * 标准化容器
+ * @param container 容器
+ * @returns 元素
+ */
+export function normalizeContainer(container: Element | string): Element | null {
+  if (isString(container)) {
+    return document.querySelector(container)
+  }
+
+  return container
 }

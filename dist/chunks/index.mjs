@@ -11,9 +11,7 @@ function render() {
   const timeDifference = newLastUpdatedTimestamp - lastUpdatedTimestamp;
   lastUpdatedTimestamp = newLastUpdatedTimestamp;
   if (renderFunctionMap.size) {
-    if (typeof window !== "undefined") {
-      requestId = window.requestAnimationFrame(render);
-    }
+    requestId = globalThis.requestAnimationFrame(render);
     if (timeDifference !== 0) {
       renderFunctionMap.forEach((fn) => {
         if (isFunction(fn)) {
@@ -34,8 +32,8 @@ watchEffect(() => {
       render();
     }
   } else {
-    if (typeof window !== "undefined" && requestId !== null) {
-      window.cancelAnimationFrame(requestId);
+    if (requestId !== null) {
+      globalThis.cancelAnimationFrame(requestId);
       requestId = null;
     }
   }
@@ -59,4 +57,4 @@ function useRenderClock(fn, options = {}) {
   };
 }
 
-export { isString as a, isFunction as i, renderFunctionMap as r, useRenderClock as u };
+export { isFunction as a, isString as i, renderFunctionMap as r, useRenderClock as u };

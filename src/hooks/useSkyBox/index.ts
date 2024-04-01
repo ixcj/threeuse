@@ -15,7 +15,7 @@ import {
   Color
 } from 'three'
 import { Sky } from 'three/examples/jsm/objects/Sky.js'
-import { useRenderClock } from '../other/useRenderClock'
+import { useRenderClock } from '@/expands/useRenderClock'
 import { isFunction } from '@/utils/type'
 import { formattedDecimal } from '@/utils/math'
 import TWEEN from '@tweenjs/tween.js'
@@ -73,6 +73,8 @@ export function useSkyBox(scene: Scene, options: UseSkyBoxOptions = {}): UseSkyB
     sunLight = scene.getObjectByName(sunLightName) as DirectionalLight
     // 如果没有找到太阳平行光，创建它
     !sunLight && (sunLight = createSunLight(sunLightName, size))
+
+    scene.add(sunLight)
   }
 
   if (showSunLight && castShadowList && castShadowList.length) {

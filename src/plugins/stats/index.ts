@@ -1,6 +1,6 @@
 import type ThreeUse from '@/index'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
-import { useRenderClock } from '@/hooks/other/useRenderClock'
+import { useRenderClock } from '@/expands/useRenderClock'
 
 export const stats = {
   install: (app: ThreeUse, options: [boolean?, boolean?]) => {
@@ -20,7 +20,7 @@ export const stats = {
 
     if (followContainer) {
       statsDom.style.setProperty('position', 'absolute')
-      statsDom.style.setProperty('z-index', '9')
+      statsDom.style.setProperty('z-index', '9999')
 
       app.subscribe({
         mount: () => {
@@ -30,7 +30,7 @@ export const stats = {
           statsDom.remove()
           start.value = false
         }
-      }, 'ThreeUse.Plugin.Stats')
+      })
     } else {
       mount(document.body)
     }

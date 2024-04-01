@@ -1,7 +1,7 @@
 ---
 
 map:
-  path: /plugin/stats/
+  path: /plugins/stats/
 
 ---
 
@@ -14,7 +14,7 @@ map:
 <demo src="./__demo__/BasicUse.vue" title="基本使用" desc="创建一个性能检测器"></demo>
 
 ```js
-import { createApp } from 'threeuse'
+import { createThreeUseApp } from 'threeuse'
 import { stats } from 'threeuse/plugin'
 const app = createApp()
 app.use(stats, show, followContainer)

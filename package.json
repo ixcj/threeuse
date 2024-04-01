@@ -1,6 +1,6 @@
 {
   "name": "threeuse",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "基于Vue3的Three.js实用组合工具",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -39,10 +39,10 @@
   "author": "ixcj<https://github.com/ixcj>",
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/ixcj/threeuse"
+    "url": "https://github.com/ixcj/threeuse"
   },
   "bugs": {
-    "url": "https://gitee.com/ixcj/threeuse/issues",
+    "url": "https://github.com/ixcj/threeuse/issues",
     "email": "i@xcj.im"
   },
   "homepage": "http://threeuse.com",
@@ -52,14 +52,13 @@
     "@ruabick/vite-plugin-gen-api-doc": "latest",
     "@ruabick/vite-plugin-gen-temp": "latest",
     "@ruabick/vitepress-demo-block": "latest",
-    "@tweenjs/tween.js": "^21.0.0",
+    "@tweenjs/tween.js": "^21.1.1",
     "@types/three": "^0.160.0",
     "@vitejs/plugin-vue": "^3.0.1",
     "cross-env": "^7.0.3",
     "echarts": "^5.4.3",
     "gh-pages": "^4.0.0",
     "np": "^7.6.2",
-    "three": "^0.160.0",
     "vitepress": "latest",
     "vue": "^3.3.8",
     "vue-echarts": "^6.6.1"
@@ -69,10 +68,12 @@
     "sass": "^1.69.5",
     "unbuild": "^0.7.6"
   },
+  "peerDependencies": {
+    "three": ">=0.160"
+  },
   "pnpm": {
     "patchedDependencies": {
-      "@ruabick/vite-plugin-gen-api-doc@0.3.3": "patches/@ruabick__vite-plugin-gen-api-doc@0.3.3.patch",
-      "@tweenjs/tween.js@21.0.0": "patches/@tweenjs__tween.js@21.0.0.patch"
+      "@ruabick/vite-plugin-gen-api-doc@0.3.3": "patches/@ruabick__vite-plugin-gen-api-doc@0.3.3.patch"
     }
   }
 }

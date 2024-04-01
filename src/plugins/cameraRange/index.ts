@@ -1,5 +1,5 @@
 import type ThreeUse from '@/index'
-import { useRenderClock } from '@/hooks/other/useRenderClock'
+import { useRenderClock } from '@/expands/useRenderClock'
 
 export type RangeItem = { min: number, max: number };
 export interface CameraRange {
@@ -36,6 +36,6 @@ export const cameraRange = {
       unmount: () => {
         start.value = false
       }
-    }, 'ThreeUse.Plugin.CameraRange')
+    })
   }
 }

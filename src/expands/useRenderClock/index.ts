@@ -15,9 +15,7 @@ function render() {
   lastUpdatedTimestamp = newLastUpdatedTimestamp
 
   if (renderFunctionMap.size) {
-    if (typeof window !== "undefined") {
-      requestId = window.requestAnimationFrame(render)
-    }
+    requestId = globalThis.requestAnimationFrame(render)
     
     if (timeDifference !== 0) {
       renderFunctionMap.forEach(fn => {
@@ -40,14 +38,17 @@ watchEffect(() => {
       render()
     }
   } else {
-    if (typeof window !== "undefined" && requestId !== null) {
-      window.cancelAnimationFrame(requestId)
+    if (requestId !== null) {
+      globalThis.cancelAnimationFrame(requestId)
       requestId = null
     }
   }
 })
 
-export function useRenderClock(fn: Fn, options: UseRenderClockOptions = {}): UseRenderReturnValue {
+export function useRenderClock(
+  fn: Fn,
+  options: UseRenderClockOptions = {}
+): UseRenderReturnValue {
   const {
     key = Symbol(),
     activate = true,
