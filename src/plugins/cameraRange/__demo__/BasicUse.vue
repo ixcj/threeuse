@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { createApp } from 'threeuse'
+import { createThreeUseApp } from 'threeuse'
 import { cameraRange, type CameraRange } from 'threeuse/plugins'
 import {
   BoxGeometry,
@@ -16,7 +16,7 @@ const range: CameraRange = {
   z: { min: -499, max: 499 },
 }
 
-const app = createApp({ cameraPosition: [5, 5, 5] }).use(cameraRange, range)
+const app = createThreeUseApp({ cameraPosition: [5, 5, 5] }).use(cameraRange, range)
 
 const geometry = new BoxGeometry(1000, 1000, 1000)
 const mats = []

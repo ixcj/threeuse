@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { createApp, useSkyBox } from 'threeuse'
+import { createThreeUseApp, useSkyBox } from 'threeuse'
 import { useLoader } from 'threeuse/expands'
-import { cubeEnvMap } from 'threeuse/plugins'
 import { AmbientLight } from 'three'
 
-const app = createApp({ cameraPosition: [5, 5, 5] }).use(cubeEnvMap)
+const app = createThreeUseApp({ cameraPosition: [5, 5, 5] })
 const scene = app.getScene()
-const ambientLight = new AmbientLight(0xffffff, 10);
+const ambientLight = new AmbientLight(0xffffff, 5);
 scene.add(ambientLight)
 
 useSkyBox(scene, {
-  defaultValue: 160
+  defaultValue: 160,
 })
 
 const { loading, loader } = useLoader([
@@ -20,7 +19,7 @@ const { loading, loader } = useLoader([
     type: 'gltf',
     path: new URL('@/assets/model/fox.glb', import.meta.url).href
   }
-], { enableDracoLoader: false })
+], { enableDracoLoader: true })
 
 async function load() {
   const foxModel = scene.getObjectByName('fox')

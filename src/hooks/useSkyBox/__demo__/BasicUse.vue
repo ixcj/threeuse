@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { createApp, useSkyBox } from 'threeuse'
+import { createThreeUseApp, useSkyBox } from 'threeuse'
 
-const app = createApp({ cameraPosition: [0.74, 4.53, -26.56] })
+const app = createThreeUseApp({ cameraPosition: [0.74, 4.53, -26.56] })
 const scene = app.getScene()
 
 const { value } = useSkyBox(scene)

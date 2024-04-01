@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { createApp } from 'threeuse'
+import { createThreeUseApp } from 'threeuse'
 import { BoxGeometry, MeshBasicMaterial, Mesh, Color } from 'three'
 
-const app = createApp({ cameraPosition: [3, 3, 3] })
+const app = createThreeUseApp({ cameraPosition: [3, 3, 3] })
 
 const geometry = new BoxGeometry(1, 1, 1)
 const mats = []
