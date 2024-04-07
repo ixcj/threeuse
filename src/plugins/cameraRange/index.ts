@@ -1,7 +1,7 @@
 import type ThreeUse from '@/index'
 import { useRenderClock } from '@/expands/useRenderClock'
 
-export type RangeItem = { min: number, max: number };
+export type RangeItem = { min: number, max: number }
 export interface CameraRange {
   x: RangeItem,
   y: RangeItem,
@@ -25,10 +25,13 @@ export const cameraRange = {
 
     const { start } = useRenderClock(() => {
       Object.keys(cameraRange).forEach((key: keyof CameraRange) => {
-        const { min, max } = cameraRange[key];
+        const { min, max } = cameraRange[key]
   
-        (camera.position[key] < min) && (camera.position[key] = min);
-        (camera.position[key] > max) && (camera.position[key] = max);
+        if (camera.position[key] < min) {
+          camera.position[key] = min
+        } else if (camera.position[key] > max) {
+          camera.position[key] = max
+        }
       })
     }, { activate: app.mounted })
 

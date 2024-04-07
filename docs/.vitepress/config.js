@@ -79,7 +79,7 @@ export default defineConfig({
     outlineTitle: '本页目录',
     footer: {
       message: 'MIT Licensed.',
-      copyright: 'Copyright © 2023-PRESENT ixcj',
+      copyright: 'Copyright © 2023-PRESENT XCJ',
     },
   },
   head: [
