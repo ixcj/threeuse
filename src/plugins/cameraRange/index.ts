@@ -7,22 +7,25 @@ export interface CameraRange {
   y: RangeItem,
   z: RangeItem,
 }
+export interface CameraRangeOptions {
+  cameraRange?: CameraRange
+}
 
 export const cameraRange = {
-  install: (app: ThreeUse, options: [CameraRange?]) => {
-    const [
-      range = {
+  install: (app: ThreeUse, options: CameraRangeOptions = {}) => {
+    const {
+      cameraRange = {
         x: { min: -1950, max: 1950 },
         y: { min: 1, max: 1950 },
         z: { min: -1950, max: 1950 },
       },
-    ] = options
+    } = options
 
     const camera = app.getCamera()
 
     const { start } = useRenderClock(() => {
-      Object.keys(range).forEach((key: keyof CameraRange) => {
-        const { min, max } = range[key];
+      Object.keys(cameraRange).forEach((key: keyof CameraRange) => {
+        const { min, max } = cameraRange[key];
   
         (camera.position[key] < min) && (camera.position[key] = min);
         (camera.position[key] > max) && (camera.position[key] = max);
@@ -37,5 +40,7 @@ export const cameraRange = {
         start.value = false
       }
     })
+
+    app.globalProperties.$cameraRange = cameraRange
   }
 }

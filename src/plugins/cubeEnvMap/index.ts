@@ -6,14 +6,30 @@ import {
   LinearMipmapLinearFilter
 } from 'three'
 
-export const cubeEnvMap = {
-  install: (app: ThreeUse, options: [[number, number, number]]) => {
-    const [
-      position = [0, 30, 0]
-    ] = options
+export interface CubeEnvMapOptions {
+  position?: [number, number, number],
+  size?: number,
+  near?: number,
+  far?: number,
+}
 
-    const cubeRenderTarget = new WebGLCubeRenderTarget(128, { generateMipmaps: true, minFilter: LinearMipmapLinearFilter })
-    const cubeCamera = new CubeCamera(1, 100000, cubeRenderTarget)
+export const cubeEnvMap = {
+  install: (
+    app: ThreeUse,
+    options: CubeEnvMapOptions = {}
+  ) => {
+    const {
+      position = [0, 100, 0],
+      size = 128,
+      near = 1,
+      far = 100000
+    } = options
+
+    const cubeRenderTarget = new WebGLCubeRenderTarget(size, {
+      generateMipmaps: true,
+      minFilter: LinearMipmapLinearFilter
+    })
+    const cubeCamera = new CubeCamera(near, far, cubeRenderTarget)
 
     cubeCamera.position.copy(new Vector3(...position))
 

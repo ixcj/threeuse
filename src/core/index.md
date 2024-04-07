@@ -16,7 +16,7 @@ map:
 ## 类型
 
 ```js
-function createApp(
+function createThreeUseApp(
   options?: CreateAppOptions
 ): ThreeUse
 ```

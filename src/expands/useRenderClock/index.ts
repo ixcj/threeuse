@@ -1,4 +1,9 @@
-import type { Key, Fn, UseRenderClockOptions, UseRenderReturnValue } from './index.d'
+import type {
+  Key,
+  Fn,
+  UseRenderClockOptions,
+  UseRenderReturnValue,
+} from './index.d'
 import { ref, watchEffect, reactive } from 'vue'
 import { isFunction } from '@/utils/type'
 

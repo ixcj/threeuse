@@ -185,7 +185,7 @@ class ThreeUse {
   }
 }
 
-function createApp(options = {}) {
+function createThreeUseApp(options = {}) {
   const app = new ThreeUse(options);
   const proxyApp = new Proxy(app, {
     get(target, property) {
@@ -444,4 +444,4 @@ function getControlOptions(time) {
   }
 }
 
-export { TIME_MAX, TIME_MIN, TIME_RANGE, TIME_RANGE_MEDIAN, createApp, ThreeUse as default, useRollingData, useSkyBox };
+export { TIME_MAX, TIME_MIN, TIME_RANGE, TIME_RANGE_MEDIAN, createThreeUseApp, ThreeUse as default, useRollingData, useSkyBox };

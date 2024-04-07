@@ -44,6 +44,7 @@ export class ThreeUse {
   public mounted: boolean = false
   public enableCustomRender: boolean = false
   public globalProperties: Record<string | symbol, any> = {}
+  public installedPlugins: WeakSet<Plugin> = new WeakSet()
 
   constructor(options: CreateAppOptions = {}) {
     const {
@@ -151,10 +152,14 @@ export class ThreeUse {
   }
 
   use(plugin: Plugin, ...options: any[]): this {
-    if (isFunction(plugin)) {
-      plugin(this, options)
+    if (this.installedPlugins.has(plugin)) {
+      console.warn(`请勿重复安装插件！`)
+    } else if (isFunction(plugin)) {
+      this.installedPlugins.add(plugin)
+      plugin(this, ...options)
     } else if (plugin && isFunction(plugin.install)) {
-      plugin.install(this, options)
+      this.installedPlugins.add(plugin)
+      plugin.install(this, ...options)
     }
 
     return this

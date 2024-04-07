@@ -192,7 +192,7 @@ class ThreeUse {
   }
 }
 
-function createApp(options = {}) {
+function createThreeUseApp(options = {}) {
   const app = new ThreeUse(options);
   const proxyApp = new Proxy(app, {
     get(target, property) {
@@ -457,7 +457,7 @@ exports.TIME_MAX = TIME_MAX;
 exports.TIME_MIN = TIME_MIN;
 exports.TIME_RANGE = TIME_RANGE;
 exports.TIME_RANGE_MEDIAN = TIME_RANGE_MEDIAN;
-exports.createApp = createApp;
+exports.createThreeUseApp = createThreeUseApp;
 exports["default"] = ThreeUse;
 exports.useRollingData = useRollingData;
 exports.useSkyBox = useSkyBox;

@@ -3,7 +3,7 @@ export { T as default } from './ThreeUse-4f771936.js';
 import * as THREE from 'three';
 import { Ref } from 'vue';
 
-declare function createApp(
+declare function createThreeUseApp(
   options?: CreateAppOptions
 ): CreateAppReturnValue
 
@@ -210,4 +210,4 @@ interface UseSkyBoxControl {
   azimuth: number,
 }
 
-export { CreateAppOptions, CreateAppReturnValue, Fn, GlobalPropertiesType, Key, UseRenderClockOptions, UseRenderReturnValue, UseRollingDataOptions, UseRollingDataReturnValue, UseSkyBoxControl, UseSkyBoxOptions, UseSkyBoxReturnValue, createApp, useRender, useRollingData, useSkyBox };
+export { CreateAppOptions, CreateAppReturnValue, Fn, GlobalPropertiesType, Key, UseRenderClockOptions, UseRenderReturnValue, UseRollingDataOptions, UseRollingDataReturnValue, UseSkyBoxControl, UseSkyBoxOptions, UseSkyBoxReturnValue, createThreeUseApp, useRender, useRollingData, useSkyBox };

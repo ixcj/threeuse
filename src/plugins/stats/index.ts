@@ -2,12 +2,20 @@ import type ThreeUse from '@/index'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { useRenderClock } from '@/expands/useRenderClock'
 
+export interface StatsOptions {
+  show?: boolean,
+  followContainer?: boolean
+}
+
 export const stats = {
-  install: (app: ThreeUse, options: [boolean?, boolean?]) => {
-    const [
+  install: (
+    app: ThreeUse,
+    options: StatsOptions = {}
+  ) => {
+    const {
       show = true,
-      followContainer = true
-    ] = options
+      followContainer = true,
+    } = options
 
     if (!show) return
 

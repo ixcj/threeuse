@@ -1,7 +1,7 @@
 import type { ThreeUse } from './ThreeUse'
 import type * as THREE from 'three'
 
-export declare function createApp(
+export declare function createThreeUseApp(
   options?: CreateAppOptions
 ): CreateAppReturnValue
 

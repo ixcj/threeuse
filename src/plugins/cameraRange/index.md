@@ -16,19 +16,19 @@ map:
 ```js
 import { createThreeUseApp } from 'threeuse'
 import { cameraRange } from 'threeuse/plugin'
-const app = createApp()
-app.use(cameraRange, range)
+const app = createThreeUseApp()
+app.use(cameraRange, options?)
 ```
 
 ### 说明
 
-通过调用 `createApp` 创建的实例对象上的 `use` 方法安装插件
+通过调用 `createThreeUseApp` 创建的实例对象上的 `use` 方法安装插件
 
-## 参数
+## options
 
 | 参数 | 说明 | 默认值 |
 | ---- | ---- | ---- |
-| range | 限制的范围 | `Range` |
+| cameraRange | 限制的范围 | `Range` |
 
 ### Range
 
